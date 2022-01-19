@@ -12,5 +12,6 @@ async def find_all():
 
 async def find_by_id(method_id):
     method = methods_collection.find_one({"_id": ObjectId(method_id)})
-    print(method)
+    if not method:
+        return False
     return methods_helper(method)
