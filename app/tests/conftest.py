@@ -1,14 +1,9 @@
 from bson import ObjectId
-import sys
 
 from app.server.database import methods_collection
 
-inserted_data = []
-
-
-def pytest_configure():
-    sys._called_from_test = True
-    data_test = [
+inserted_methods = []
+methods_data_test = [
         {
             "user_id": "1",
             "name": "test",
@@ -43,13 +38,13 @@ def pytest_configure():
         }
     ]
 
-    for m in data_test:
+
+def pytest_configure():
+    for m in methods_data_test:
         new_method = methods_collection.insert_one(m)
-        inserted_data.append(new_method.inserted_id)
+        inserted_methods.append(new_method.inserted_id)
 
 
 def pytest_unconfigure(config):
-    for m in inserted_data:
+    for m in inserted_methods:
         methods_collection.remove({"_id": ObjectId(m)})
-
-    del sys._called_from_test
