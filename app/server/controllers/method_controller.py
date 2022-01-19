@@ -11,5 +11,6 @@ async def find_all():
 
 
 async def find_by_id(method_id):
-    method = await methods_collection.find_one({"_id": ObjectId(method_id)})
-    return method
+    method = methods_collection.find_one({"_id": ObjectId(method_id)})
+    print(method)
+    return methods_helper(method)
