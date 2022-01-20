@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Response, status, Body
+from fastapi.encoders import jsonable_encoder
 
-from app.server.controllers.method_controller import find_all, find_by_id
+from app.server.controllers.method_controller import find_all, find_by_id, create_method
 from app.server.models.CustomResponse import error_response
+from app.server.models.method import MethodSchema
 
 router = APIRouter(
     prefix="/methods",
@@ -29,3 +31,12 @@ async def get_method_by_id(method_id: str, response: Response):
         return error_response("No hemos encontrado ningún resultado")
     else:
         return method
+
+
+@router.post("/")
+async def upload_method(data: MethodSchema = Body(...)):
+    data = jsonable_encoder(data)
+    new_method = await create_method(data)
+    if not new_method:
+        return error_response("No se ha podido subir el método")
+    return new_method

@@ -16,3 +16,9 @@ async def find_by_id(method_id):
     if not method:
         return False
     return methods_helper(method)
+
+
+async def create_method(method):
+    m = methods_collection.insert_one(method)
+    new_method = methods_collection.find_one({"_id": m.inserted_id})
+    return methods_helper(new_method)
