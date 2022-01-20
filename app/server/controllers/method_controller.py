@@ -18,6 +18,15 @@ async def find_by_id(method_id):
     return methods_helper(method)
 
 
+async def find_by_user_id(user_id):
+    methods = []
+    for m in methods_collection.find({"user_id": user_id}):
+        methods.append(methods_helper(m))
+    if len(methods) <= 0:
+        return False
+    return methods
+
+
 async def create_method(method):
     m = methods_collection.insert_one(method)
     new_method = methods_collection.find_one({"_id": m.inserted_id})
