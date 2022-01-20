@@ -4,11 +4,15 @@ from pydantic import BaseModel, Field
 
 
 class MethodSchema(BaseModel):
+    class Result(BaseModel):
+        name: str = Field(...)
+        result: float = Field(...)
+
     user_id: str = Field(...)
     name: str = Field(...)
     info: str = Field(...)
     link: str = Field(...)
-    results: List[{str: float}] = Field(...)
+    results: List[Result] = Field(...)
 
     class Config:
         schema_extra = {
