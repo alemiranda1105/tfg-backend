@@ -42,3 +42,9 @@ async def update_method(method_id, method):
             new_method = methods_collection.find_one({"_id": method_id})
             return methods_helper(new_method)
     return False
+
+
+async def delete_method(method_id):
+    method_id = ObjectId(method_id)
+    removed = methods_collection.delete_one({"_id": method_id})
+    return removed.deleted_count >= 1

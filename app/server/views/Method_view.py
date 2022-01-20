@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Response, status, Body
 from fastapi.encoders import jsonable_encoder
 
-from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, update_method
+from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
+    update_method, delete_method
 from app.server.models.CustomResponse import error_response
 from app.server.models.Method import MethodSchema
 
@@ -64,3 +65,12 @@ async def modify_method(response: Response, method_id: str, data: MethodSchema =
         response.status_code = status.HTTP_404_NOT_FOUND
         return error_response("No ha sido posible completar la operación")
     return updated
+
+
+@router.delete("/{method_id}")
+async def remove_method(response: Response, method_id: str):
+    removed = await delete_method(method_id)
+    if not removed:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return error_response("No ha sido posible completar la operación")
+    return {"success": True}

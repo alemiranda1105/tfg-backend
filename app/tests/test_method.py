@@ -64,3 +64,12 @@ def test_update_method():
         assert data['link'] == updated_link
 
 
+def test_remove_method():
+    i = 0
+    for m in inserted_methods:
+        response = client.delete("methods/{}".format(m['id']))
+        assert response.status_code == 200
+        assert response.json()['success']
+    response = client.get("methods/all")
+    methods = response.json()
+    assert methods['Error']
