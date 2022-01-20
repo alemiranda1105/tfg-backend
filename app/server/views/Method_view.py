@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Response, status, Body
 from fastapi.encoders import jsonable_encoder
 
-from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id
+from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, update_method
 from app.server.models.CustomResponse import error_response
 from app.server.models.Method import MethodSchema
 
@@ -25,7 +25,6 @@ async def get_method_by_user_id(response: Response, user_id: str = None):
     if user_id is None:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return error_response("Error al buscar los metodos del usuario")
-    print(user_id)
     methods = await find_by_user_id(user_id)
     if not methods:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -55,3 +54,13 @@ async def upload_method(response: Response, data: MethodSchema = Body(...)):
         return error_response("No se ha podido subir el método")
     response.status_code = status.HTTP_201_CREATED
     return new_method
+
+
+@router.put("/{method_id}")
+async def modify_method(response: Response, method_id: str, data: MethodSchema = Body(...)):
+    data = jsonable_encoder(data)
+    updated = await update_method(method_id, data)
+    if not updated:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return error_response("No ha sido posible completar la operación")
+    return updated

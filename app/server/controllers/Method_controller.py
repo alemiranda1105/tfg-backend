@@ -31,3 +31,14 @@ async def create_method(method):
     m = methods_collection.insert_one(method)
     new_method = methods_collection.find_one({"_id": m.inserted_id})
     return methods_helper(new_method)
+
+
+async def update_method(method_id, method):
+    method_id = ObjectId(method_id)
+    old = methods_collection.find_one({"_id": method_id})
+    if old:
+        updated = methods_collection.update_one({"_id": method_id}, {"$set": method})
+        if updated:
+            new_method = methods_collection.find_one({"_id": method_id})
+            return methods_helper(new_method)
+    return False

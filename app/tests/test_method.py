@@ -44,3 +44,23 @@ def test_get_by_user_id():
     assert response.status_code == 500
     response = client.get("methods/user_methods")
     assert response.status_code == 400
+
+
+def test_update_method():
+    i = 0
+    for m in inserted_methods:
+        updated_name = "actualizado-{}".format(i)
+        updated_link = "www.test_{}.com".format(updated_name)
+        m['name'] = updated_name
+        m['link'] = updated_link
+        i += 1
+        response = client.put(
+            "methods/{}".format(m['id']),
+            json=m
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data['name'] == updated_name
+        assert data['link'] == updated_link
+
+
