@@ -1,7 +1,7 @@
 from bson import ObjectId
 
 from app.server.database import methods_collection
-from app.server.helpers.helpers import methods_helper
+from app.server.helpers.Helpers import methods_helper
 
 
 async def find_all():

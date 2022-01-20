@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Response, status, Body
 from fastapi.encoders import jsonable_encoder
 
-from app.server.controllers.method_controller import find_all, find_by_id, create_method, find_by_user_id
+from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id
 from app.server.models.CustomResponse import error_response
-from app.server.models.method import MethodSchema
+from app.server.models.Method import MethodSchema
 
 router = APIRouter(
     prefix="/methods",
