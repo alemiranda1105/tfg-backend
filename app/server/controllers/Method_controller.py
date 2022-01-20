@@ -2,6 +2,7 @@ from bson import ObjectId
 
 from app.server.database import methods_collection
 from app.server.helpers.Helpers import methods_helper
+from app.server.utils.Utils import to_csv, to_xls
 
 
 async def find_all():
@@ -48,3 +49,13 @@ async def delete_method(method_id):
     method_id = ObjectId(method_id)
     removed = methods_collection.delete_one({"_id": method_id})
     return removed.deleted_count >= 1
+
+
+async def download_all_methods(file_type):
+    methods = await find_all()
+    if file_type == "json":
+        return methods
+    elif file_type == "csv":
+        return to_csv(methods)
+    elif file_type == "xls":
+        return to_xls(methods)

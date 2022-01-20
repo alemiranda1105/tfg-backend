@@ -1,8 +1,11 @@
+import io
+
 from fastapi import APIRouter, Response, status, Body
 from fastapi.encoders import jsonable_encoder
+from starlette.responses import StreamingResponse, FileResponse
 
 from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
-    update_method, delete_method
+    update_method, delete_method, download_all_methods
 from app.server.models.CustomResponse import error_response
 from app.server.models.Method import MethodSchema
 
@@ -31,6 +34,28 @@ async def get_method_by_user_id(response: Response, user_id: str = None):
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return error_response("No se ha encontrado ningún resultado para este usuario")
     return methods
+
+
+@router.get("/download_csv", response_class=StreamingResponse)
+async def download_csv():
+    file = await download_all_methods("csv")
+    response = StreamingResponse(iter([file.getvalue()]), media_type="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=results.csv"
+    return response
+
+
+@router.get("/download_xls", response_class=StreamingResponse)
+async def download_xls():
+    file = await download_all_methods("xls")
+    response = StreamingResponse(iter([file.getvalue()]), media_type="application/vnd.ms-excel")
+    response.headers["Content-Disposition"] = "attachment; filename=results.xlsx"
+    return response
+
+
+@router.get("/download_json")
+async def download_json():
+    file = await download_all_methods("json")
+    return file
 
 
 @router.get("/{method_id}")
