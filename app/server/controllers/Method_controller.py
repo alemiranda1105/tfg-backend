@@ -1,4 +1,5 @@
 from bson import ObjectId
+import random
 
 from app.server.database import methods_collection
 from app.server.helpers.Helpers import methods_helper
@@ -29,6 +30,7 @@ async def find_by_user_id(user_id):
 
 
 async def create_method(method):
+    method = evaluate_method(method)
     m = methods_collection.insert_one(method)
     new_method = methods_collection.find_one({"_id": m.inserted_id})
     return methods_helper(new_method)
@@ -59,3 +61,15 @@ async def download_all_methods(file_type):
         return to_csv(methods)
     elif file_type == "xls":
         return to_xls(methods)
+
+
+def evaluate_method(method):
+    # Call to evaluation script (not available yet)
+    # Mocked evaluation
+    metrics = ["m1", "m2", "m3"]
+    for m in metrics:
+        method['results'].append({
+            "name": m,
+            "result": round(random.uniform(0, 1), 4)
+        })
+    return method
