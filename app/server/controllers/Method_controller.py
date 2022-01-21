@@ -40,6 +40,7 @@ async def update_method(method_id, method):
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
+        method = evaluate_method(method)
         updated = methods_collection.update_one({"_id": method_id}, {"$set": method})
         if updated:
             new_method = methods_collection.find_one({"_id": method_id})
@@ -67,6 +68,7 @@ def evaluate_method(method):
     # Call to evaluation script (not available yet)
     # Mocked evaluation
     metrics = ["m1", "m2", "m3"]
+    method['results'] = []
     for m in metrics:
         method['results'].append({
             "name": m,
