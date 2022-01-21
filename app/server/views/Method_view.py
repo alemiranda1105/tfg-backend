@@ -7,7 +7,7 @@ from starlette.responses import StreamingResponse, FileResponse
 from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
     update_method, delete_method, download_all_methods
 from app.server.models.CustomResponse import error_response
-from app.server.models.Method import MethodSchema
+from app.server.models.Method import MethodSchema, UploadMethodSchema
 
 router = APIRouter(
     prefix="/methods",
@@ -72,7 +72,7 @@ async def get_method_by_id(method_id: str, response: Response):
 
 
 @router.post("/")
-async def upload_method(response: Response, data: MethodSchema = Body(...)):
+async def upload_method(response: Response, data: UploadMethodSchema = Body(...)):
     data = jsonable_encoder(data)
     new_method = await create_method(data)
     if not new_method:
