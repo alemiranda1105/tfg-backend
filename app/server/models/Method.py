@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -31,5 +31,24 @@ class MethodSchema(BaseModel):
                         "result": 0.5421
                     }
                 ]
+            }
+        }
+
+
+class UploadMethodSchema(BaseModel):
+    user_id: str = Field(...)
+    name: str = Field(...)
+    info: str = Field(...)
+    link: str = Field(...)
+    results: List = Field(...)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "user_id": "1",
+                "name": "test",
+                "info": "This is an example",
+                "link": "www.example.com",
+                "results": []
             }
         }
