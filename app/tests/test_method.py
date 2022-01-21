@@ -17,6 +17,7 @@ def test_create_methods():
         data = response.json()
         inserted_methods.append(data)
         assert data['name'] == str(m['name'])
+        assert len(data['results']) == 3
 
 
 def test_all_methods():
