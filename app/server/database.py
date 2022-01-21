@@ -16,3 +16,4 @@ else:
     db = client['tfg']
 
 methods_collection = db["methods"]
+users_collection = db["users"]
