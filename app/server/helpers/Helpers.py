@@ -9,3 +9,11 @@ def methods_helper(method) -> dict:
         "link": str(method["link"]),
         "results": method["results"]
     }
+
+
+def users_helper(user) -> dict:
+    return {
+        "id": str(user["_id"]),
+        "username": str(user["username"]),
+        "email": str(user["email"])
+    }

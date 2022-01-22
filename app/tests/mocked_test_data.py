@@ -1,3 +1,6 @@
+from app.server.auth.auth_handler import sign_jwt
+
+mocked_jwt = sign_jwt("test")['token']
 
 methods_data_test = [
         {
@@ -49,3 +52,21 @@ methods_data_test = [
             ]
         }
     ]
+
+user_data_test = [
+    {
+        "username": "test1",
+        "email": "test1@test.com",
+        "password": "123456"
+    },
+    {
+        "username": "test2",
+        "email": "test2@test.com",
+        "password": "123456"
+    },
+    {
+        "username": "test3",
+        "email": "test3@test.com",
+        "password": "123456"
+    }
+]
