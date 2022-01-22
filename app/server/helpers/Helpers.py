@@ -11,9 +11,10 @@ def methods_helper(method) -> dict:
     }
 
 
-def users_helper(user) -> dict:
+def users_helper(user, token: str) -> dict:
     return {
         "id": str(user["_id"]),
         "username": str(user["username"]),
-        "email": str(user["email"])
+        "email": str(user["email"]),
+        "token": token
     }
