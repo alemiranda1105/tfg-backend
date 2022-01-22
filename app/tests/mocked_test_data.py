@@ -1,3 +1,6 @@
+from app.server.auth.auth_handler import sign_jwt
+
+mocked_jwt = sign_jwt("test")['token']
 
 methods_data_test = [
         {

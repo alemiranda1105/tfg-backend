@@ -1,6 +1,6 @@
 from starlette.testclient import TestClient
 from app.server.app import app
-from app.tests.mocked_test_data import methods_data_test
+from app.tests.mocked_test_data import methods_data_test, mocked_jwt
 
 client = TestClient(app)
 
@@ -11,6 +11,7 @@ def test_create_methods():
     for m in methods_data_test:
         response = client.post(
             "methods/",
+            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)},
             json=m
         )
         assert response.status_code == 201
@@ -36,14 +37,23 @@ def test_get_by_id():
 
 def test_get_by_user_id():
     for i in [1, 2, 3]:
-        response = client.get("methods/user_methods?user_id={}".format(i))
+        response = client.get(
+            "methods/user_methods?user_id={}".format(i),
+            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
+        )
         data = response.json()
         assert response.status_code == 200
         for m in data:
             assert m['user_id'] == str(i)
-    response = client.get("methods/user_methods?user_id=60")
+    response = client.get(
+        "methods/user_methods?user_id=60",
+        headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
+    )
     assert response.status_code == 500
-    response = client.get("methods/user_methods")
+    response = client.get(
+        "methods/user_methods",
+        headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
+    )
     assert response.status_code == 400
 
 
@@ -57,6 +67,7 @@ def test_update_method():
         i += 1
         response = client.put(
             "methods/{}".format(m['id']),
+            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)},
             json=m
         )
         assert response.status_code == 200
@@ -66,9 +77,11 @@ def test_update_method():
 
 
 def test_remove_method():
-    i = 0
     for m in inserted_methods:
-        response = client.delete("methods/{}".format(m['id']))
+        response = client.delete(
+            "methods/{}".format(m['id']),
+            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
+        )
         assert response.status_code == 200
         assert response.json()['success']
     response = client.get("methods/all")
