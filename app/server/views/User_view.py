@@ -1,15 +1,24 @@
 from fastapi import APIRouter, Response, status, Body
 from fastapi.encoders import jsonable_encoder
 
-from app.server.auth.auth_handler import sign_jwt
-from app.server.controllers.User_controller import create_user
+from app.server.controllers.User_controller import create_user, verify_user
 from app.server.models.CustomResponse import error_response
-from app.server.models.User import UserSchema
+from app.server.models.User import UserSchema, UserLoginSchema
 
 router = APIRouter(
     prefix="/users",
     tags=["users"]
 )
+
+
+@router.post("/login")
+async def login(response: Response, user_data: UserLoginSchema = Body(...)):
+    user = jsonable_encoder(user_data)
+    current_user = await verify_user(user)
+    if not current_user:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return error_response("Compruebe los datos e inténtelo de nuevo")
+    return current_user
 
 
 @router.post("/", status_code=201)
@@ -19,5 +28,4 @@ async def sign_up(response: Response, user_data: UserSchema = Body(...)):
     if not new_user:
         response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
         return error_response("No se ha podido crear al usuario")
-    new_user['token'] = sign_jwt(new_user['id'])
     return new_user
