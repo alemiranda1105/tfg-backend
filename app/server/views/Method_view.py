@@ -1,9 +1,10 @@
 import io
 
-from fastapi import APIRouter, Response, status, Body
+from fastapi import APIRouter, Response, status, Body, Depends
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import StreamingResponse, FileResponse
 
+from app.server.auth.auth_bearer import JWTBearer
 from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
     update_method, delete_method, download_all_methods
 from app.server.models.CustomResponse import error_response
@@ -24,7 +25,7 @@ async def get_all_methods(response: Response):
     return methods
 
 
-@router.get("/user_methods")
+@router.get("/user_methods", dependencies=[Depends(JWTBearer())])
 async def get_method_by_user_id(response: Response, user_id: str = None):
     if user_id is None:
         response.status_code = status.HTTP_400_BAD_REQUEST
@@ -71,7 +72,7 @@ async def get_method_by_id(method_id: str, response: Response):
         return method
 
 
-@router.post("/")
+@router.post("/", dependencies=[Depends(JWTBearer())])
 async def upload_method(response: Response, data: UploadMethodSchema = Body(...)):
     data = jsonable_encoder(data)
     new_method = await create_method(data)
@@ -82,7 +83,7 @@ async def upload_method(response: Response, data: UploadMethodSchema = Body(...)
     return new_method
 
 
-@router.put("/{method_id}")
+@router.put("/{method_id}", dependencies=[Depends(JWTBearer())])
 async def modify_method(response: Response, method_id: str, data: MethodSchema = Body(...)):
     data = jsonable_encoder(data)
     updated = await update_method(method_id, data)
@@ -92,7 +93,7 @@ async def modify_method(response: Response, method_id: str, data: MethodSchema =
     return updated
 
 
-@router.delete("/{method_id}")
+@router.delete("/{method_id}", dependencies=[Depends(JWTBearer())])
 async def remove_method(response: Response, method_id: str):
     removed = await delete_method(method_id)
     if not removed:
