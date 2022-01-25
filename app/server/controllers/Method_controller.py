@@ -2,6 +2,7 @@ from bson import ObjectId
 import random
 
 from app.server.database import methods_collection
+from app.server.evaluation.evaluation import evaluation
 from app.server.helpers.Helpers import methods_helper
 from app.server.utils.Utils import to_csv, to_xls
 
@@ -65,13 +66,5 @@ async def download_all_methods(file_type):
 
 
 def evaluate_method(method):
-    # Call to evaluation script (not available yet)
-    # Mocked evaluation
-    metrics = ["m1", "m2", "m3"]
-    method['results'] = []
-    for m in metrics:
-        method['results'].append({
-            "name": m,
-            "result": round(random.uniform(0, 1), 4)
-        })
+    method = evaluation(method, '/Users/alemiranda/Desktop/tfg/test_json.zip')
     return method

@@ -3,3 +3,4 @@ venv
 .idea
 .pytest_cache
 .DS_Store
+uploaded_methods
