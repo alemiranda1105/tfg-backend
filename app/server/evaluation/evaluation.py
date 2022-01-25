@@ -57,8 +57,6 @@ def evaluation(method, file):
         r_score.append((get_recall_score(base_result, result)))
         p_score.append((get_precision_score(base_result, result)))
 
-        break
-
     method['results'].append({'f1_score': np.mean(f_score)})
     method['results'].append({'recall_score': np.mean(r_score)})
     method['results'].append({'precision_score': np.mean(p_score)})
