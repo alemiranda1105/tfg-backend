@@ -84,6 +84,3 @@ def test_remove_method():
         )
         assert response.status_code == 200
         assert response.json()['success']
-    response = client.get("methods/all")
-    methods = response.json()
-    assert methods['Error']
