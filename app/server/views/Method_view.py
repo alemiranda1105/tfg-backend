@@ -1,8 +1,6 @@
-import io
-
 from fastapi import APIRouter, Response, status, Body, Depends
 from fastapi.encoders import jsonable_encoder
-from starlette.responses import StreamingResponse, FileResponse
+from starlette.responses import StreamingResponse
 
 from app.server.auth.auth_bearer import JWTBearer
 from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
