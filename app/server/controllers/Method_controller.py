@@ -41,7 +41,18 @@ async def update_method(method_id, method):
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
-        method = evaluate_method(method)
+        updated = methods_collection.update_one({"_id": method_id}, {"$set": method})
+        if updated:
+            new_method = methods_collection.find_one({"_id": method_id})
+            return methods_helper(new_method)
+    return False
+
+
+async def update_and_evaluate(method_id, method, file):
+    method_id = ObjectId(method_id)
+    old = methods_collection.find_one({"_id": method_id})
+    if old:
+        method = evaluate_method(method, file)
         updated = methods_collection.update_one({"_id": method_id}, {"$set": method})
         if updated:
             new_method = methods_collection.find_one({"_id": method_id})
