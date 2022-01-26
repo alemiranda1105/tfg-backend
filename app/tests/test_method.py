@@ -1,3 +1,6 @@
+import io
+import json
+
 from starlette.testclient import TestClient
 from app.server.app import app
 from app.tests.mocked_test_data import methods_data_test, mocked_jwt
@@ -9,10 +12,16 @@ inserted_methods = []
 
 def test_create_methods():
     for m in methods_data_test:
+        file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
         response = client.post(
             "methods/",
-            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)},
-            json=m
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'file': (file, open(file, 'rb')),
+                'data': (None, json.dumps(m)),
+            }
         )
         assert response.status_code == 201
         data = response.json()
@@ -67,8 +76,37 @@ def test_update_method():
         i += 1
         response = client.put(
             "methods/{}".format(m['id']),
-            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)},
-            json=m
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'data': (None, json.dumps(m))
+            }
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data['name'] == updated_name
+        assert data['link'] == updated_link
+
+
+def test_update_and_evaluate_method():
+    i = 0
+    for m in inserted_methods:
+        updated_name = "actualizado_evaluado-{}".format(i)
+        updated_link = "www.test-evaluado_{}.com".format(updated_name)
+        m['name'] = updated_name
+        m['link'] = updated_link
+        i += 1
+        file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
+        response = client.put(
+            "methods/{}".format(m['id']),
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'file': (file, open(file, 'rb')),
+                'data': (None, json.dumps(m)),
+            }
         )
         assert response.status_code == 200
         data = response.json()
@@ -84,6 +122,3 @@ def test_remove_method():
         )
         assert response.status_code == 200
         assert response.json()['success']
-    response = client.get("methods/all")
-    methods = response.json()
-    assert methods['Error']

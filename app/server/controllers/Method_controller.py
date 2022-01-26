@@ -2,6 +2,7 @@ from bson import ObjectId
 import random
 
 from app.server.database import methods_collection
+from app.server.evaluation.evaluation import evaluation
 from app.server.helpers.Helpers import methods_helper
 from app.server.utils.Utils import to_csv, to_xls
 
@@ -29,8 +30,8 @@ async def find_by_user_id(user_id):
     return methods
 
 
-async def create_method(method):
-    method = evaluate_method(method)
+async def create_method(method, method_file):
+    method = evaluate_method(method, method_file)
     m = methods_collection.insert_one(method)
     new_method = methods_collection.find_one({"_id": m.inserted_id})
     return methods_helper(new_method)
@@ -40,7 +41,18 @@ async def update_method(method_id, method):
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
-        method = evaluate_method(method)
+        updated = methods_collection.update_one({"_id": method_id}, {"$set": method})
+        if updated:
+            new_method = methods_collection.find_one({"_id": method_id})
+            return methods_helper(new_method)
+    return False
+
+
+async def update_and_evaluate(method_id, method, file):
+    method_id = ObjectId(method_id)
+    old = methods_collection.find_one({"_id": method_id})
+    if old:
+        method = evaluate_method(method, file)
         updated = methods_collection.update_one({"_id": method_id}, {"$set": method})
         if updated:
             new_method = methods_collection.find_one({"_id": method_id})
@@ -64,14 +76,6 @@ async def download_all_methods(file_type):
         return to_xls(methods)
 
 
-def evaluate_method(method):
-    # Call to evaluation script (not available yet)
-    # Mocked evaluation
-    metrics = ["m1", "m2", "m3"]
-    method['results'] = []
-    for m in metrics:
-        method['results'].append({
-            "name": m,
-            "result": round(random.uniform(0, 1), 4)
-        })
+def evaluate_method(method, file):
+    method = evaluation(method, file)
     return method

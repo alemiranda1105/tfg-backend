@@ -1,12 +1,14 @@
 import io
+import json
+from typing import Optional
 
-from fastapi import APIRouter, Response, status, Body, Depends
+from fastapi import APIRouter, Response, status, Body, Depends, File, UploadFile, Form
 from fastapi.encoders import jsonable_encoder
-from starlette.responses import StreamingResponse, FileResponse
+from starlette.responses import StreamingResponse
 
 from app.server.auth.auth_bearer import JWTBearer
 from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
-    update_method, delete_method, download_all_methods
+    update_method, delete_method, download_all_methods, update_and_evaluate
 from app.server.models.CustomResponse import error_response
 from app.server.models.Method import MethodSchema, UploadMethodSchema
 
@@ -73,9 +75,11 @@ async def get_method_by_id(method_id: str, response: Response):
 
 
 @router.post("/", dependencies=[Depends(JWTBearer())])
-async def upload_method(response: Response, data: UploadMethodSchema = Body(...)):
-    data = jsonable_encoder(data)
-    new_method = await create_method(data)
+async def upload_method(response: Response, file: bytes = File(...), data: str = Body(...)):
+    data_json = json.loads(data)
+    data = jsonable_encoder(data_json)
+    file = io.BytesIO(file)
+    new_method = await create_method(data, file)
     if not new_method:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return error_response("No se ha podido subir el método")
@@ -84,9 +88,14 @@ async def upload_method(response: Response, data: UploadMethodSchema = Body(...)
 
 
 @router.put("/{method_id}", dependencies=[Depends(JWTBearer())])
-async def modify_method(response: Response, method_id: str, data: MethodSchema = Body(...)):
-    data = jsonable_encoder(data)
-    updated = await update_method(method_id, data)
+async def modify_method(response: Response, method_id: str, file: Optional[bytes] = File(None), data: str = Body(...)):
+    data_json = json.loads(data)
+    data = jsonable_encoder(data_json)
+    if file is not None:
+        file = io.BytesIO(file)
+        updated = await update_and_evaluate(method_id, data, file)
+    else:
+        updated = await update_method(method_id, data)
     if not updated:
         response.status_code = status.HTTP_404_NOT_FOUND
         return error_response("No ha sido posible completar la operación")
