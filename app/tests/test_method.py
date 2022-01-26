@@ -13,8 +13,6 @@ inserted_methods = []
 def test_create_methods():
     for m in methods_data_test:
         file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
-        m_str = ','.join("{}:{}".format(*i) for i in m.items())
-        m_str = "{" + m_str + "}"
         response = client.post(
             "methods/",
             headers={
