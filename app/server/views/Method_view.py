@@ -1,4 +1,8 @@
-from fastapi import APIRouter, Response, status, Body, Depends
+import io
+import json
+from typing import Optional
+
+from fastapi import APIRouter, Response, status, Body, Depends, File, UploadFile, Form
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import StreamingResponse
 
@@ -71,9 +75,11 @@ async def get_method_by_id(method_id: str, response: Response):
 
 
 @router.post("/", dependencies=[Depends(JWTBearer())])
-async def upload_method(response: Response, data: UploadMethodSchema = Body(...)):
-    data = jsonable_encoder(data)
-    new_method = await create_method(data)
+async def upload_method(response: Response, file: bytes = File(...), data: str = Body(...)):
+    data_json = json.loads(data)
+    data = jsonable_encoder(data_json)
+    file = io.BytesIO(file)
+    new_method = await create_method(data, file)
     if not new_method:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return error_response("No se ha podido subir el método")

@@ -1,3 +1,6 @@
+import io
+import json
+
 from starlette.testclient import TestClient
 from app.server.app import app
 from app.tests.mocked_test_data import methods_data_test, mocked_jwt
@@ -9,10 +12,18 @@ inserted_methods = []
 
 def test_create_methods():
     for m in methods_data_test:
+        file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
+        m_str = ','.join("{}:{}".format(*i) for i in m.items())
+        m_str = "{" + m_str + "}"
         response = client.post(
             "methods/",
-            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)},
-            json=m
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'file': (file, open(file, 'rb')),
+                'data': (None, json.dumps(m)),
+            }
         )
         assert response.status_code == 201
         data = response.json()

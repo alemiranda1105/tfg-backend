@@ -30,8 +30,8 @@ async def find_by_user_id(user_id):
     return methods
 
 
-async def create_method(method):
-    method = evaluate_method(method)
+async def create_method(method, method_file):
+    method = evaluate_method(method, method_file)
     m = methods_collection.insert_one(method)
     new_method = methods_collection.find_one({"_id": m.inserted_id})
     return methods_helper(new_method)
@@ -65,6 +65,6 @@ async def download_all_methods(file_type):
         return to_xls(methods)
 
 
-def evaluate_method(method):
-    method = evaluation(method, '/Users/alemiranda/Desktop/tfg/test_json.zip')
+def evaluate_method(method, file):
+    method = evaluation(method, file)
     return method
