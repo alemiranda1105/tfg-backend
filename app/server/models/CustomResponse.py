@@ -1,6 +1,12 @@
+from pydantic import BaseModel
 
 
-def error_response(msg: str) -> dict:
-    return {
-        "Error": "{}".format(msg)
-    }
+class ErrorResponse(BaseModel):
+    detail: str
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "detail": "Something went wrong"
+            }
+        }
