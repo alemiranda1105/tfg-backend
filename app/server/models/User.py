@@ -30,3 +30,20 @@ class UserLoginSchema(BaseModel):
                 "password": "daswef123@#2"
             }
         }
+
+
+class LoggedUserSchema(BaseModel):
+    id: str = Field()
+    username: str = Field()
+    email: EmailStr = Field()
+    token: str = Field()
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": "61f12475ba18c90f68911ed3",
+                "username": "example",
+                "email": "example@example.com",
+                "token": "this_is_not_a_token"
+            }
+        }
