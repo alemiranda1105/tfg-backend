@@ -1,6 +1,6 @@
 import io
 import json
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import APIRouter, Response, status, Body, Depends, File
 from fastapi.encoders import jsonable_encoder
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 
-@router.get("/all")
+@router.get("/all", response_model=List[MethodSchema])
 async def get_all_methods(response: Response):
     methods = find_all()
     if len(methods) <= 0:
@@ -27,7 +27,7 @@ async def get_all_methods(response: Response):
     return methods
 
 
-@router.get("/user_methods", dependencies=[Depends(JWTBearer())])
+@router.get("/user_methods", response_model=List[MethodSchema], dependencies=[Depends(JWTBearer())])
 async def get_method_by_user_id(response: Response, user_id: str = None):
     if user_id is None:
         response.status_code = status.HTTP_400_BAD_REQUEST
@@ -74,7 +74,7 @@ async def get_method_by_id(method_id: str, response: Response):
         return method
 
 
-@router.post("/", dependencies=[Depends(JWTBearer())])
+@router.post("/", response_model=MethodSchema, dependencies=[Depends(JWTBearer())])
 async def upload_method(response: Response, file: bytes = File(...), data: str = Body(...)):
     data_json = json.loads(data)
     data = jsonable_encoder(data_json)
@@ -87,7 +87,7 @@ async def upload_method(response: Response, file: bytes = File(...), data: str =
     return new_method
 
 
-@router.put("/{method_id}", dependencies=[Depends(JWTBearer())])
+@router.put("/{method_id}", response_model=MethodSchema, dependencies=[Depends(JWTBearer())])
 async def modify_method(response: Response, method_id: str, file: Optional[bytes] = File(None), data: str = Body(...)):
     data_json = json.loads(data)
     data = jsonable_encoder(data_json)
