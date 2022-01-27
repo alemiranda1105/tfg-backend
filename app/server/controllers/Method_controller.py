@@ -1,5 +1,4 @@
 from bson import ObjectId
-import random
 
 from pymongo.errors import DuplicateKeyError
 
@@ -9,21 +8,21 @@ from app.server.helpers.Helpers import methods_helper
 from app.server.utils.Utils import to_csv, to_xls
 
 
-async def find_all():
+def find_all():
     methods = []
     for m in methods_collection.find():
         methods.append(methods_helper(m))
     return methods
 
 
-async def find_by_id(method_id):
+def find_by_id(method_id):
     method = methods_collection.find_one({"_id": ObjectId(method_id)})
     if not method:
         return False
     return methods_helper(method)
 
 
-async def find_by_user_id(user_id):
+def find_by_user_id(user_id):
     methods = []
     for m in methods_collection.find({"user_id": user_id}):
         methods.append(methods_helper(m))
@@ -32,7 +31,7 @@ async def find_by_user_id(user_id):
     return methods
 
 
-async def create_method(method, method_file):
+def create_method(method, method_file):
     try:
         if methods_collection.find_one({"name": method['name']}):
             return False
@@ -44,7 +43,7 @@ async def create_method(method, method_file):
         return False
 
 
-async def update_method(method_id, method):
+def update_method(method_id, method):
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
@@ -65,7 +64,7 @@ async def update_method(method_id, method):
     return False
 
 
-async def update_and_evaluate(method_id, method, file):
+def update_and_evaluate(method_id, method, file):
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
@@ -77,14 +76,14 @@ async def update_and_evaluate(method_id, method, file):
     return False
 
 
-async def delete_method(method_id):
+def delete_method(method_id):
     method_id = ObjectId(method_id)
     removed = methods_collection.delete_one({"_id": method_id})
     return removed.deleted_count >= 1
 
 
-async def download_all_methods(file_type):
-    methods = await find_all()
+def download_all_methods(file_type):
+    methods = find_all()
     if file_type == "json":
         return methods
     elif file_type == "csv":
