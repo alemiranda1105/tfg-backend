@@ -17,3 +17,7 @@ else:
 
 methods_collection = db["methods"]
 users_collection = db["users"]
+
+methods_collection.create_index("name", unique=True)
+users_collection.create_index("username", unique=True)
+users_collection.create_index("email", unique=True)
