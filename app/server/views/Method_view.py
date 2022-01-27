@@ -97,7 +97,7 @@ async def modify_method(response: Response, method_id: str, file: Optional[bytes
     else:
         updated = await update_method(method_id, data)
     if not updated:
-        response.status_code = status.HTTP_404_NOT_FOUND
+        response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
         return error_response("No ha sido posible completar la operación")
     return updated
 

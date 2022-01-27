@@ -1,6 +1,8 @@
 from bson import ObjectId
 import random
 
+from pymongo.errors import DuplicateKeyError
+
 from app.server.database import methods_collection
 from app.server.evaluation.evaluation import evaluation
 from app.server.helpers.Helpers import methods_helper
@@ -31,16 +33,31 @@ async def find_by_user_id(user_id):
 
 
 async def create_method(method, method_file):
-    method = evaluate_method(method, method_file)
-    m = methods_collection.insert_one(method)
-    new_method = methods_collection.find_one({"_id": m.inserted_id})
-    return methods_helper(new_method)
+    try:
+        if methods_collection.find_one({"name": method['name']}):
+            return False
+        method = evaluate_method(method, method_file)
+        m = methods_collection.insert_one(method)
+        new_method = methods_collection.find_one({"_id": m.inserted_id})
+        return methods_helper(new_method)
+    except DuplicateKeyError:
+        return False
 
 
 async def update_method(method_id, method):
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
+        exists = methods_collection.find_one(
+            {"$and": [
+                {"name": method['name']},
+                {"_id": {
+                    "$ne": method_id
+                }}
+            ]}
+        )
+        if exists:
+            return False
         updated = methods_collection.update_one({"_id": method_id}, {"$set": method})
         if updated:
             new_method = methods_collection.find_one({"_id": method_id})
