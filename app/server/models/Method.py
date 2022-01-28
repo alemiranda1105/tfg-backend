@@ -1,34 +1,33 @@
 from typing import List
-
 from pydantic import BaseModel, Field
 
 
 class MethodSchema(BaseModel):
     class Result(BaseModel):
-        name: str = Field(...)
-        result: float = Field(...)
+        name: str
+        result: float
 
-    user_id: str = Field(...)
-    name: str = Field(...)
-    info: str = Field(...)
-    link: str = Field(...)
-    results: List[Result] = Field(...)
+    id: str
+    user_id: str
+    name: str
+    info: str
+    link: str
+    results: List
 
     class Config:
         schema_extra = {
             "example": {
+                "id": "dasdW231d",
                 "user_id": "1",
                 "name": "test",
                 "info": "This is an example",
                 "link": "www.example.com",
                 "results": [
                     {
-                        "name": "m1",
-                        "result": 0.9192
+                        "m1": 0.9192
                     },
                     {
-                        "name": "m2",
-                        "result": 0.5421
+                        "m2": 0.5421
                     }
                 ]
             }
@@ -45,6 +44,7 @@ class UploadMethodSchema(BaseModel):
     class Config:
         schema_extra = {
             "example": {
+                "id": "dasdW231d",
                 "user_id": "1",
                 "name": "test",
                 "info": "This is an example",
