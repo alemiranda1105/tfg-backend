@@ -68,6 +68,16 @@ def update_and_evaluate(method_id, method, file):
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
+        exists = methods_collection.find_one(
+            {"$and": [
+                {"name": method['name']},
+                {"_id": {
+                    "$ne": method_id
+                }}
+            ]}
+        )
+        if exists:
+            return False
         method = evaluate_method(method, file)
         updated = methods_collection.update_one({"_id": method_id}, {"$set": method})
         if updated:

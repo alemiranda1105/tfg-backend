@@ -112,6 +112,21 @@ def test_get_by_user_id():
     assert response.status_code == 400
 
 
+def test_update_method_error():
+    for m, name in zip(inserted_methods, ['test3', 'test', 'test2']):
+        m['name'] = name
+        response = client.put(
+            "methods/{}".format(m['id']),
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'data': (None, json.dumps(m))
+            }
+        )
+        assert response.status_code == 422
+
+
 def test_update_method():
     i = 0
     for m in inserted_methods:
@@ -168,3 +183,12 @@ def test_remove_method():
         )
         assert response.status_code == 200
         assert response.json()['success']
+
+
+def test_remove_method_error():
+    for m in inserted_methods:
+        response = client.delete(
+            "methods/{}".format(m['id']),
+            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
+        )
+        assert response.status_code == 404
