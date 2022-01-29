@@ -75,7 +75,7 @@ async def download_json():
                 404: {"model": ErrorResponse}
             })
 async def get_method_by_id(method_id: str):
-    if len(method_id) < 24:
+    if len(method_id) != 24:
         raise HTTPException(400, "No ha sido posible completar la operación")
     method = find_by_id(method_id)
     if not method:

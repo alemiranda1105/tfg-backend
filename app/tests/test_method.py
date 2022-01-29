@@ -77,6 +77,19 @@ def test_get_by_id():
         assert data['id'] == str(m['id'])
 
 
+def test_get_by_id_errors():
+    # wrong formatted id
+    response = client.get("methods/badid")
+    data = response.json()
+    assert response.status_code == 400
+    assert data['detail'] is not ""
+    # non-existent id
+    response = client.get("methods/61f55939068506c05536aecf")
+    data = response.json()
+    assert response.status_code == 404
+    assert data['detail'] is not ""
+
+
 def test_get_by_user_id():
     for i in [1, 2, 3]:
         response = client.get(
