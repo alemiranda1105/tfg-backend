@@ -84,6 +84,8 @@ def delete_method(method_id):
 
 def download_all_methods(file_type):
     methods = find_all()
+    if len(methods) <= 0:
+        return False
     if file_type == "json":
         return methods
     elif file_type == "csv":
