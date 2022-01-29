@@ -9,6 +9,13 @@ client = TestClient(app)
 inserted_methods = []
 
 
+def test_all_methods_error():
+    response = client.get("methods/all")
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] is not ""
+
+
 def test_create_methods():
     file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
     for m in methods_data_test:

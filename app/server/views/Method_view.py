@@ -21,12 +21,12 @@ router = APIRouter(
 @router.get("/all",
             responses={
                 200: {"model": MethodSchema},
-                500: {"model": ErrorResponse}
+                404: {"model": ErrorResponse}
             })
 async def get_all_methods():
     methods = find_all()
     if len(methods) <= 0:
-        raise HTTPException(500, "No hemos encontrado ningún resultado")
+        raise HTTPException(404, "No hemos encontrado ningún resultado")
     return methods
 
 
