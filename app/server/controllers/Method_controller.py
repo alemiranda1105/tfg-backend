@@ -34,7 +34,7 @@ def find_by_user_id(user_id):
 def create_method(method, method_file):
     try:
         if methods_collection.find_one({"name": method['name']}):
-            return False
+            raise DuplicateKeyError('El valor ya existe')
         method = evaluate_method(method, method_file)
         m = methods_collection.insert_one(method)
         new_method = methods_collection.find_one({"_id": m.inserted_id})

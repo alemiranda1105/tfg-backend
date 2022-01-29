@@ -10,8 +10,8 @@ inserted_methods = []
 
 
 def test_create_methods():
+    file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
     for m in methods_data_test:
-        file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
         response = client.post(
             "methods/",
             headers={
@@ -27,6 +27,33 @@ def test_create_methods():
         inserted_methods.append(data)
         assert data['name'] == str(m['name'])
         assert len(data['results']) == 3
+
+
+def test_create_methods_errors():
+    file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
+    for m in methods_data_test:
+        response = client.post(
+            "methods/",
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'file': (file, open(file, 'rb')),
+                'data': (None, json.dumps(m)),
+            }
+        )
+        assert response.status_code == 500
+        # No file
+        response = client.post(
+            "methods/",
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'data': (None, json.dumps(m)),
+            }
+        )
+        assert response.status_code == 422
 
 
 def test_all_methods():
