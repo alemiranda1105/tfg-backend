@@ -43,6 +43,15 @@ def test_login_username():
         assert data['username'] == u['username']
 
 
+def test_login_error():
+    data = {
+        "username": "error",
+        "password": "123456"
+    }
+    response = client.post("users/login", json=data)
+    assert response.status_code == 404
+
+
 def test_repeated_users():
     for u in user_data_test:
         response = client.post("users/", json=u)

@@ -21,12 +21,12 @@ router = APIRouter(
 @router.get("/all",
             responses={
                 200: {"model": MethodSchema},
-                500: {"model": ErrorResponse}
+                404: {"model": ErrorResponse}
             })
 async def get_all_methods():
     methods = find_all()
     if len(methods) <= 0:
-        raise HTTPException(500, "No hemos encontrado ningún resultado")
+        raise HTTPException(404, "No hemos encontrado ningún resultado")
     return methods
 
 
@@ -49,6 +49,8 @@ async def get_method_by_user_id(user_id: str = None):
 @router.get("/download_csv", response_class=StreamingResponse)
 async def download_csv():
     file = download_all_methods("csv")
+    if not file:
+        raise HTTPException(500, "No se puede completar la solicitud")
     response = StreamingResponse(iter([file.getvalue()]), media_type="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=results.csv"
     return response
@@ -57,6 +59,8 @@ async def download_csv():
 @router.get("/download_xls", response_class=StreamingResponse)
 async def download_xls():
     file = download_all_methods("xls")
+    if not file:
+        raise HTTPException(500, "No se puede completar la solicitud")
     response = StreamingResponse(iter([file.getvalue()]), media_type="application/vnd.ms-excel")
     response.headers["Content-Disposition"] = "attachment; filename=results.xlsx"
     return response
@@ -65,6 +69,8 @@ async def download_xls():
 @router.get("/download_json")
 async def download_json():
     file = download_all_methods("json")
+    if not file:
+        raise HTTPException(500, "No se puede completar la solicitud")
     return file
 
 
@@ -75,7 +81,7 @@ async def download_json():
                 404: {"model": ErrorResponse}
             })
 async def get_method_by_id(method_id: str):
-    if len(method_id) < 24:
+    if len(method_id) != 24:
         raise HTTPException(400, "No ha sido posible completar la operación")
     method = find_by_id(method_id)
     if not method:

@@ -9,9 +9,16 @@ client = TestClient(app)
 inserted_methods = []
 
 
+def test_all_methods_error():
+    response = client.get("methods/all")
+    assert response.status_code == 404
+    data = response.json()
+    assert data["detail"] is not ""
+
+
 def test_create_methods():
+    file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
     for m in methods_data_test:
-        file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
         response = client.post(
             "methods/",
             headers={
@@ -29,6 +36,33 @@ def test_create_methods():
         assert len(data['results']) == 3
 
 
+def test_create_methods_errors():
+    file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
+    for m in methods_data_test:
+        response = client.post(
+            "methods/",
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'file': (file, open(file, 'rb')),
+                'data': (None, json.dumps(m)),
+            }
+        )
+        assert response.status_code == 500
+        # No file
+        response = client.post(
+            "methods/",
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'data': (None, json.dumps(m)),
+            }
+        )
+        assert response.status_code == 422
+
+
 def test_all_methods():
     response = client.get("methods/all")
     assert response.status_code == 200
@@ -41,6 +75,19 @@ def test_get_by_id():
         data = response.json()
         assert response.status_code == 200
         assert data['id'] == str(m['id'])
+
+
+def test_get_by_id_errors():
+    # wrong formatted id
+    response = client.get("methods/badid")
+    data = response.json()
+    assert response.status_code == 400
+    assert data['detail'] is not ""
+    # non-existent id
+    response = client.get("methods/61f55939068506c05536aecf")
+    data = response.json()
+    assert response.status_code == 404
+    assert data['detail'] is not ""
 
 
 def test_get_by_user_id():
@@ -63,6 +110,21 @@ def test_get_by_user_id():
         headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
     )
     assert response.status_code == 400
+
+
+def test_update_method_error():
+    for m, name in zip(inserted_methods, ['test3', 'test', 'test2']):
+        m['name'] = name
+        response = client.put(
+            "methods/{}".format(m['id']),
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            },
+            files={
+                'data': (None, json.dumps(m))
+            }
+        )
+        assert response.status_code == 422
 
 
 def test_update_method():
@@ -121,3 +183,12 @@ def test_remove_method():
         )
         assert response.status_code == 200
         assert response.json()['success']
+
+
+def test_remove_method_error():
+    for m in inserted_methods:
+        response = client.delete(
+            "methods/{}".format(m['id']),
+            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
+        )
+        assert response.status_code == 404
