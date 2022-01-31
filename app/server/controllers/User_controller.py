@@ -20,10 +20,12 @@ async def verify_user(user):
     user['password'] = hash_password(user['password'])
     if user['username'] is not None:
         u = users_collection.find_one({"username": user['username']})
-        if u['password'] == user['password']:
-            return users_helper(u, sign_jwt(str(u['_id']))['token'])
+        if u is not None:
+            if u['password'] == user['password']:
+                return users_helper(u, sign_jwt(str(u['_id']))['token'])
     if user['email'] is not None:
         u = users_collection.find_one({"email": user['email']})
-        if u['password'] == user['password']:
-            return users_helper(u, sign_jwt(str(u['_id']))['token'])
+        if u is not None:
+            if u['password'] == user['password']:
+                return users_helper(u, sign_jwt(str(u['_id']))['token'])
     return False
