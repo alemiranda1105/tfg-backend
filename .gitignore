@@ -4,3 +4,5 @@ venv
 .pytest_cache
 .DS_Store
 uploaded_methods
+evaluation_examples/results-example
+evaluation_examples/test_json.zip
