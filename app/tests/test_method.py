@@ -8,6 +8,7 @@ client = TestClient(app)
 
 inserted_methods = []
 
+file = "/Users/alemiranda/Desktop/tfg/tfg-backend/evaluation_examples/results-example-reduced.zip"
 
 def test_all_methods_error():
     response = client.get("methods/all")
@@ -17,7 +18,6 @@ def test_all_methods_error():
 
 
 def test_create_methods():
-    file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
     for m in methods_data_test:
         response = client.post(
             "methods/",
@@ -37,7 +37,6 @@ def test_create_methods():
 
 
 def test_create_methods_errors():
-    file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
     for m in methods_data_test:
         response = client.post(
             "methods/",
@@ -158,7 +157,6 @@ def test_update_and_evaluate_method():
         m['name'] = updated_name
         m['link'] = updated_link
         i += 1
-        file = "/Users/alemiranda/Desktop/tfg/test_json.zip"
         response = client.put(
             "methods/{}".format(m['id']),
             headers={
