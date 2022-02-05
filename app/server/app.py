@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.server.views import Method_view, User_view
+from app.server.views import Method_view, User_view, Dataset_view
 
 origins = [
     "http://localhost",
@@ -12,6 +12,7 @@ origins = [
 app = FastAPI()
 app.include_router(Method_view.router)
 app.include_router(User_view.router)
+app.include_router(Dataset_view.router)
 
 app.add_middleware(
     CORSMiddleware,
