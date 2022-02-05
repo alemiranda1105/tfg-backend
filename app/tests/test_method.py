@@ -1,4 +1,6 @@
 import json
+from dotenv import load_dotenv
+import os
 
 from starlette.testclient import TestClient
 from app.server.app import app
@@ -7,8 +9,9 @@ from app.tests.mocked_test_data import methods_data_test, mocked_jwt
 client = TestClient(app)
 
 inserted_methods = []
+load_dotenv()
+file = os.getenv('TEST_FILE_ZIP')
 
-file = "/Users/alemiranda/Desktop/tfg/tfg-backend/evaluation_examples/results-example-reduced.zip"
 
 def test_all_methods_error():
     response = client.get("methods/all")
