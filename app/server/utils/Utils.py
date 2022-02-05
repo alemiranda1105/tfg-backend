@@ -22,7 +22,7 @@ def to_xls(data: List[dict]):
 
 
 def json_to_dict(file) -> dict:
-    with open(file) as json_file:
+    with open(file, encoding='utf8') as json_file:
         return json.load(json_file)
 
 
