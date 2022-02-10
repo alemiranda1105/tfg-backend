@@ -18,6 +18,19 @@ class UserSchema(BaseModel):
         }
 
 
+class ExternalUserSchema(BaseModel):
+    id: str = Field()
+    username: str = Field()
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "id": "thisIsAnExample",
+                "username": "example1"
+            }
+        }
+
+
 class UserLoginSchema(BaseModel):
     email: Optional[EmailStr]
     username: Optional[str]
