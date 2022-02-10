@@ -11,7 +11,14 @@ def methods_helper(method) -> dict:
     }
 
 
-def users_helper(user, token: str) -> dict:
+def users_helper(user):
+    return {
+        "id": str(user["_id"]),
+        "username": str(user["username"])
+    }
+
+
+def users_login_helper(user, token: str) -> dict:
     return {
         "id": str(user["_id"]),
         "username": str(user["username"]),

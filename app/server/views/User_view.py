@@ -1,14 +1,26 @@
 from fastapi import APIRouter, Body, HTTPException
 from fastapi.encoders import jsonable_encoder
 
-from app.server.controllers.User_controller import create_user, verify_user
+from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id
 from app.server.models.CustomResponse import ErrorResponse
-from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema
+from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, ExternalUserSchema
 
 router = APIRouter(
     prefix="/users",
     tags=["users"]
 )
+
+
+@router.get("/{user_id}",
+            responses={
+                200: {"model": ExternalUserSchema},
+                404: {"model": ErrorResponse}
+            })
+async def show_user(user_id: str):
+    user = find_user_by_id(user_id)
+    if not user:
+        raise HTTPException(404, "No se pudo encontrar al usuario")
+    return user
 
 
 @router.post("/login",
