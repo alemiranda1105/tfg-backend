@@ -6,12 +6,15 @@ from mocked_test_data import user_data_test
 
 client = TestClient(app)
 
+inserted_users = []
+
 
 def test_signup():
     for u in user_data_test:
         response = client.post("users/", json=u)
         assert response.status_code == 201
         data = response.json()
+        inserted_users.append(data['id'])
         assert data['token'] != ""
 
 
@@ -50,6 +53,15 @@ def test_login_error():
     }
     response = client.post("users/login", json=data)
     assert response.status_code == 404
+
+
+def test_get_user_by_id():
+    for u in inserted_users:
+        response = client.get("users/{}".format(u))
+        assert response.status_code == 200
+        data = response.json()
+        assert data['id'] == u
+        assert data['username'] != ''
 
 
 def test_repeated_users():
