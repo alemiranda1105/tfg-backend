@@ -8,21 +8,21 @@ methods_data_test = [
             "name": "test",
             "info": "This is an example",
             "link": "www.example.com",
-            "results": []
+            "results": {}
         },
         {
             "user_id": "2",
             "name": "test2",
             "info": "This is an example2",
             "link": "www.example.com",
-            "results": []
+            "results": {}
         },
         {
             "user_id": "3",
             "name": "test3",
             "info": "This is an example3",
             "link": "www.example.com",
-            "results": []
+            "results": {}
         }
     ]
 
