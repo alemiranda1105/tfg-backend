@@ -1,12 +1,10 @@
 from bson import ObjectId
-from pydantic import ValidationError
 
 from pymongo.errors import DuplicateKeyError
 
 from app.server.database import methods_collection
 from app.server.evaluation.evaluation import evaluation
 from app.server.helpers.Helpers import methods_helper, method_validation_helper
-from app.server.models.Method import MethodSchema, NewMethodModel
 from app.server.utils.Utils import to_csv, to_xls
 
 
