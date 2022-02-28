@@ -9,12 +9,12 @@ class NewMethodModel(BaseModel):
 
 
 class MethodSchema(BaseModel):
-    id: str
-    user_id: str
-    name: str
-    info: str
-    link: str
-    results: dict
+    id: str = Field(...)
+    user_id: str = Field(...)
+    name: str = Field(max_length=25, min_length=3)
+    info: str = Field(max_length=200, min_length=5)
+    link: str = Field(max_length=50, min_length=3)
+    results: dict = Field(...)
 
     class Config:
         schema_extra = {

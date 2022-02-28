@@ -57,6 +57,19 @@ def create_method(method, method_file):
 
 def update_method(method_id, method):
     method_id = ObjectId(method_id)
+
+    try:
+        MethodSchema(
+            id=method_id,
+            name=method['name'],
+            user_id=method['user_id'],
+            info=method['info'],
+            link=method['link'],
+            results=method['results']
+        )
+    except ValidationError:
+        return False
+
     old = methods_collection.find_one({"_id": method_id})
     if old:
         exists = methods_collection.find_one(
@@ -78,6 +91,19 @@ def update_method(method_id, method):
 
 def update_and_evaluate(method_id, method, file):
     method_id = ObjectId(method_id)
+
+    try:
+        MethodSchema(
+            id=method_id,
+            name=method['name'],
+            user_id=method['user_id'],
+            info=method['info'],
+            link=method['link'],
+            results=method['results']
+        )
+    except ValidationError:
+        return False
+
     old = methods_collection.find_one({"_id": method_id})
     if old:
         exists = methods_collection.find_one(
