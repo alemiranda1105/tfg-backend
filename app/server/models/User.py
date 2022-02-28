@@ -5,8 +5,8 @@ from pydantic import BaseModel, Field, EmailStr
 
 class UserSchema(BaseModel):
     email: EmailStr = Field(...)
-    username: str = Field(...)
-    password: str = Field(...)
+    username: str = Field(max_length=20, min_length=3)
+    password: str = Field(min_length=6)
 
     class Config:
         schema_extra = {

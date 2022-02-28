@@ -1,18 +1,20 @@
-from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class NewMethodModel(BaseModel):
+    name: str = Field(max_length=25, min_length=3)
+    user_id: str = Field(...)
+    info: str = Field(max_length=200, min_length=5)
+    link: str = Field(max_length=50, min_length=3)
 
 
 class MethodSchema(BaseModel):
-    class Result:
-        name: str
-        res: float
-
-    id: str
-    user_id: str
-    name: str
-    info: str
-    link: str
-    results: dict
+    id: str = Field(...)
+    user_id: str = Field(...)
+    name: str = Field(max_length=25, min_length=3)
+    info: str = Field(max_length=200, min_length=5)
+    link: str = Field(max_length=50, min_length=3)
+    results: dict = Field(...)
 
     class Config:
         schema_extra = {
@@ -26,33 +28,5 @@ class MethodSchema(BaseModel):
                     "m1": 0.9192,
                     "m2": 0.5421
                 }
-            }
-        }
-
-
-class OldMethodSchema(BaseModel):
-    id: str
-    user_id: str
-    name: str
-    info: str
-    link: str
-    results: List
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "id": "dasdW231d",
-                "user_id": "1",
-                "name": "test",
-                "info": "This is an example",
-                "link": "www.example.com",
-                "results": [
-                    {
-                        "m1": 0.9192
-                    },
-                    {
-                        "m2": 0.5421
-                    }
-                ]
             }
         }

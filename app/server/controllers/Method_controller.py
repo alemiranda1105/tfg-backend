@@ -4,7 +4,7 @@ from pymongo.errors import DuplicateKeyError
 
 from app.server.database import methods_collection
 from app.server.evaluation.evaluation import evaluation
-from app.server.helpers.Helpers import methods_helper
+from app.server.helpers.Helpers import methods_helper, method_validation_helper
 from app.server.utils.Utils import to_csv, to_xls
 
 
@@ -32,6 +32,9 @@ def find_by_user_id(user_id):
 
 
 def create_method(method, method_file):
+    if not method_validation_helper(method, "", True):
+        return False
+
     try:
         if methods_collection.find_one({"name": method['name']}):
             raise DuplicateKeyError('El valor ya existe')
@@ -44,6 +47,8 @@ def create_method(method, method_file):
 
 
 def update_method(method_id, method):
+    if not method_validation_helper(method, method_id, False):
+        return False
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
@@ -65,6 +70,9 @@ def update_method(method_id, method):
 
 
 def update_and_evaluate(method_id, method, file):
+    if not method_validation_helper(method, method_id, False):
+        return False
+
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
