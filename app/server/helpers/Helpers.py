@@ -1,3 +1,6 @@
+from pydantic import ValidationError
+
+from app.server.models.Method import NewMethodModel, MethodSchema
 
 
 def methods_helper(method) -> dict:
@@ -9,6 +12,29 @@ def methods_helper(method) -> dict:
         "link": str(method["link"]),
         "results": method["results"]
     }
+
+
+def method_validation_helper(method, method_id, is_new: bool) -> bool:
+    try:
+        if is_new:
+            NewMethodModel(
+                name=method['name'],
+                user_id=method['user_id'],
+                info=method['info'],
+                link=method['link']
+            )
+        else:
+            MethodSchema(
+                id=method_id,
+                name=method['name'],
+                user_id=method['user_id'],
+                info=method['info'],
+                link=method['link'],
+                results=method['results']
+            )
+    except ValidationError:
+        return False
+    return True
 
 
 def users_helper(user):
