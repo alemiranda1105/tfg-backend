@@ -1,10 +1,12 @@
 from bson import ObjectId
+from pydantic import ValidationError
 
 from pymongo.errors import DuplicateKeyError
 
 from app.server.database import methods_collection
 from app.server.evaluation.evaluation import evaluation
 from app.server.helpers.Helpers import methods_helper
+from app.server.models.Method import MethodSchema, NewMethodModel
 from app.server.utils.Utils import to_csv, to_xls
 
 
@@ -32,6 +34,16 @@ def find_by_user_id(user_id):
 
 
 def create_method(method, method_file):
+    print(method)
+    try:
+        NewMethodModel(
+            name=method['name'],
+            user_id=method['user_id'],
+            info=method['info'],
+            link=method['link']
+        )
+    except ValidationError:
+        return False
     try:
         if methods_collection.find_one({"name": method['name']}):
             raise DuplicateKeyError('El valor ya existe')

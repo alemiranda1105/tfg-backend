@@ -1,12 +1,14 @@
-from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class NewMethodModel(BaseModel):
+    name: str = Field(max_length=25, min_length=3)
+    user_id: str = Field(...)
+    info: str = Field(max_length=200, min_length=5)
+    link: str = Field(max_length=50, min_length=3)
 
 
 class MethodSchema(BaseModel):
-    class Result:
-        name: str
-        res: float
-
     id: str
     user_id: str
     name: str
