@@ -1,9 +1,11 @@
 from bson import ObjectId
+from pydantic import ValidationError
 from pymongo.errors import DuplicateKeyError
 
 from app.server.auth.auth_handler import sign_jwt
 from app.server.database import users_collection
 from app.server.helpers.Helpers import users_helper, users_login_helper
+from app.server.models.User import UserSchema
 from app.server.utils.Utils import hash_password
 
 
@@ -16,6 +18,15 @@ def find_user_by_id(user_id: str):
 
 
 async def create_user(user):
+    try:
+        UserSchema(
+            email=user['email'],
+            username=user['username'],
+            password=user['password']
+        )
+    except ValidationError:
+        return False
+
     user['password'] = hash_password(user['password'])
     try:
         u = users_collection.insert_one(user)
