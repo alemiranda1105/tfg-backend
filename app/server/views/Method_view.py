@@ -116,6 +116,8 @@ async def upload_method(file: bytes = File(...), data: str = Body(...)):
 async def modify_method(method_id: str, file: Optional[bytes] = File(None), data: str = Body(...)):
     data_json = json.loads(data)
     data = jsonable_encoder(data_json)
+    if 'id' in data:
+        del data['id']
     if file is not None:
         file = io.BytesIO(file)
         updated = update_and_evaluate(method_id, data, file)
