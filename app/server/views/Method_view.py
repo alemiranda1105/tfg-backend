@@ -27,7 +27,10 @@ router = APIRouter(
 async def get_all_methods(request: Request):
     user_id = ""
     if 'authorization' in request.headers:
-        user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        try:
+            user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            user_id = ""
     methods = find_all(user_id)
     if len(methods) <= 0:
         raise HTTPException(404, "No hemos encontrado ningún resultado")
