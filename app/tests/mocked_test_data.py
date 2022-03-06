@@ -8,6 +8,7 @@ methods_data_test = [
             "name": "test",
             "info": "This is an example",
             "link": "www.example.com",
+            "private": True,
             "results": {}
         },
         {
@@ -15,6 +16,7 @@ methods_data_test = [
             "name": "test2",
             "info": "This is an example2",
             "link": "www.example.com",
+            "private": False,
             "results": {}
         },
         {
@@ -22,6 +24,7 @@ methods_data_test = [
             "name": "test3",
             "info": "This is an example3",
             "link": "www.example.com",
+            "private": False,
             "results": {}
         }
     ]

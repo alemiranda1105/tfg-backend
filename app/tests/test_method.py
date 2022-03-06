@@ -68,7 +68,11 @@ def test_create_methods_errors():
 def test_all_methods():
     response = client.get("methods/all")
     assert response.status_code == 200
-    assert len(response.json()) == len(methods_data_test)
+
+    data = response.json()
+    assert len(data) < len(inserted_methods)
+    for m in data:
+        assert not m['private']
 
 
 def test_get_by_id():
