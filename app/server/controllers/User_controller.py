@@ -46,5 +46,5 @@ async def verify_user(user):
     })
     if found:
         if found['password'] == user['password']:
-            return users_login_helper(found, sign_jwt(str(found['username']))['token'])
+            return users_login_helper(found, sign_jwt(str(found['_id']))['token'])
     return False

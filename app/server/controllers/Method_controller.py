@@ -8,10 +8,11 @@ from app.server.helpers.Helpers import methods_helper, method_validation_helper
 from app.server.utils.Utils import to_csv, to_xls
 
 
-def find_all():
+def find_all(user_id: str = ""):
     methods = []
+    print(user_id)
     for m in methods_collection.find():
-        if not m['private']:
+        if not m['private'] or m['user_id'] == user_id:
             methods.append(methods_helper(m))
     return methods
 

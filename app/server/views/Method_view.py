@@ -2,11 +2,12 @@ import io
 import json
 from typing import Optional, List
 
-from fastapi import APIRouter, Body, Depends, File, HTTPException
+from fastapi import APIRouter, Body, Depends, File, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import StreamingResponse
 
 from app.server.auth.auth_bearer import JWTBearer
+from app.server.auth.auth_handler import get_id_from_token
 from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
     update_method, delete_method, download_all_methods, update_and_evaluate
 from app.server.models.CustomResponse import ErrorResponse
@@ -23,8 +24,11 @@ router = APIRouter(
                 200: {"model": MethodSchema},
                 404: {"model": ErrorResponse}
             })
-async def get_all_methods():
-    methods = find_all()
+async def get_all_methods(request: Request):
+    user_id = ""
+    if 'authorization' in request.headers:
+        user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+    methods = find_all(user_id)
     if len(methods) <= 0:
         raise HTTPException(404, "No hemos encontrado ningún resultado")
     return methods
