@@ -10,6 +10,7 @@ def methods_helper(method) -> dict:
         "name": str(method["name"]),
         "info": str(method["info"]),
         "link": str(method["link"]),
+        "private": bool(method["private"]),
         "results": method["results"]
     }
 
@@ -21,7 +22,8 @@ def method_validation_helper(method, method_id, is_new: bool) -> bool:
                 name=method['name'],
                 user_id=method['user_id'],
                 info=method['info'],
-                link=method['link']
+                link=method['link'],
+                private=method['private']
             )
         else:
             MethodSchema(
@@ -30,6 +32,7 @@ def method_validation_helper(method, method_id, is_new: bool) -> bool:
                 user_id=method['user_id'],
                 info=method['info'],
                 link=method['link'],
+                private=method['private'],
                 results=method['results']
             )
     except ValidationError:

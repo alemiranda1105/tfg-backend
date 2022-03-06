@@ -34,3 +34,10 @@ def decode_jwt(token: str) -> dict:
         return decoded_token
     except:
         return {}
+
+
+def get_id_from_token(token: str):
+    payload = decode_jwt(token)
+    if 'user_id' in payload:
+        return payload['user_id']
+    return ''
