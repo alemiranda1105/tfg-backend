@@ -11,7 +11,8 @@ from app.server.utils.Utils import to_csv, to_xls
 def find_all():
     methods = []
     for m in methods_collection.find():
-        methods.append(methods_helper(m))
+        if not m['private']:
+            methods.append(methods_helper(m))
     return methods
 
 
