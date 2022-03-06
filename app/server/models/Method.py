@@ -26,6 +26,7 @@ class MethodSchema(BaseModel):
                 "name": "test",
                 "info": "This is an example",
                 "link": "www.example.com",
+                "private": False,
                 "results": {
                     "m1": 0.9192,
                     "m2": 0.5421
