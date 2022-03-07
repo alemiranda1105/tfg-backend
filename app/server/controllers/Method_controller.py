@@ -102,8 +102,8 @@ def delete_method(method_id):
     return removed.deleted_count >= 1
 
 
-def download_all_methods(file_type):
-    methods = find_all()
+def download_all_methods(file_type, user_id: str = ""):
+    methods = find_all(user_id)
     if len(methods) <= 0:
         return False
     if file_type == "json":
