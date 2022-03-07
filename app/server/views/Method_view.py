@@ -54,8 +54,14 @@ async def get_method_by_user_id(user_id: str = None):
 
 
 @router.get("/download_csv", response_class=StreamingResponse)
-async def download_csv():
-    file = download_all_methods("csv")
+async def download_csv(request: Request):
+    user_id = ""
+    if 'authorization' in request.headers:
+        try:
+            user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            user_id = ""
+    file = download_all_methods("csv", user_id)
     if not file:
         raise HTTPException(500, "No se puede completar la solicitud")
     response = StreamingResponse(iter([file.getvalue()]), media_type="text/csv")
@@ -64,8 +70,14 @@ async def download_csv():
 
 
 @router.get("/download_xls", response_class=StreamingResponse)
-async def download_xls():
-    file = download_all_methods("xls")
+async def download_xls(request: Request):
+    user_id = ""
+    if 'authorization' in request.headers:
+        try:
+            user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            user_id = ""
+    file = download_all_methods("xls", user_id)
     if not file:
         raise HTTPException(500, "No se puede completar la solicitud")
     response = StreamingResponse(iter([file.getvalue()]), media_type="application/vnd.ms-excel")
@@ -74,8 +86,14 @@ async def download_xls():
 
 
 @router.get("/download_json")
-async def download_json():
-    file = download_all_methods("json")
+async def download_json(request: Request):
+    user_id = ""
+    if 'authorization' in request.headers:
+        try:
+            user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            user_id = ""
+    file = download_all_methods("json", user_id)
     if not file:
         raise HTTPException(500, "No se puede completar la solicitud")
     return file
