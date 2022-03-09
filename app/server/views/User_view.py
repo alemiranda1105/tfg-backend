@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Depends
 from fastapi.encoders import jsonable_encoder
 
-from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id
+from app.server.auth.auth_bearer import JWTBearer
+from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile
 from app.server.models.CustomResponse import ErrorResponse
 from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, ExternalUserSchema
 
@@ -9,6 +10,19 @@ router = APIRouter(
     prefix="/users",
     tags=["users"]
 )
+
+
+@router.get("/profile",
+            responses={
+                200: {"model": ExternalUserSchema},
+                404: {"model": ErrorResponse}
+            },
+            dependencies=[Depends(JWTBearer())])
+async def show_user_profile(user_id: str):
+    user = get_user_profile(user_id)
+    if not user:
+        raise HTTPException(404, "No se pudo encontrar al usuario")
+    return user
 
 
 @router.get("/{user_id}",

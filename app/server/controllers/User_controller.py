@@ -4,7 +4,7 @@ from pymongo.errors import DuplicateKeyError
 
 from app.server.auth.auth_handler import sign_jwt
 from app.server.database import users_collection
-from app.server.helpers.Helpers import users_helper, users_login_helper
+from app.server.helpers.Helpers import users_helper, users_login_helper, user_profile_helper
 from app.server.models.User import UserSchema
 from app.server.utils.Utils import hash_password
 
@@ -14,6 +14,14 @@ def find_user_by_id(user_id: str):
     user = users_collection.find_one({"_id": u_id})
     if user:
         return users_helper(user)
+    return False
+
+
+def get_user_profile(user_id: str):
+    u_id = ObjectId(user_id)
+    user = users_collection.find_one({"_id": u_id})
+    if user:
+        return user_profile_helper(user)
     return False
 
 
