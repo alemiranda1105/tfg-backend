@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Body, HTTPException, Depends
+from fastapi import APIRouter, Body, HTTPException, Depends, Request
 from fastapi.encoders import jsonable_encoder
 
 from app.server.auth.auth_bearer import JWTBearer
+from app.server.auth.auth_handler import get_id_from_token
 from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile
 from app.server.models.CustomResponse import ErrorResponse
 from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, ExternalUserSchema
@@ -18,7 +19,18 @@ router = APIRouter(
                 404: {"model": ErrorResponse}
             },
             dependencies=[Depends(JWTBearer())])
-async def show_user_profile(user_id: str):
+async def show_user_profile(user_id: str, request: Request):
+    token_id = ""
+    if 'authorization' in request.headers:
+        try:
+            token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            token_id = ""
+
+    # Check if the user trying to watch the profile is the same
+    if token_id != user_id:
+        raise HTTPException(403, "Usuario incorrecto")
+
     user = get_user_profile(user_id)
     if not user:
         raise HTTPException(404, "No se pudo encontrar al usuario")
