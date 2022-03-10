@@ -86,7 +86,6 @@ def test_profile_page_error():
     assert response.status_code == 403
 
 
-
 def test_login_error():
     data = {
         "username": "error",
@@ -105,7 +104,90 @@ def test_get_user_by_id():
         assert data['username'] != ''
 
 
+def test_update_user():
+    user = user_data_test[0]
+    login_data = {
+        "username": user['username'],
+        "password": user['password']
+    }
+
+    # User login
+    response = client.post("users/login", json=login_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data['token'] != ""
+
+    # token is saved for request the profile
+    token = data['token']
+    assert data['username'] == user['username']
+
+    # Update
+    new_data = {
+        "username": "test_u",
+        "email": "updated@example.com",
+        "password": user['password']
+    }
+    response = client.put("users/{}".format(data['id']),
+                          json=new_data,
+                          headers={
+                              'Authorization': 'Bearer {}'.format(token)
+                          })
+    assert response.status_code == 200
+    data = response.json()
+    assert data['username'] == new_data['username']
+    assert data['email'] == new_data['email']
+
+
+def test_update_user_auth_error():
+    user = user_data_test[0]
+    # Update
+    new_data = {
+        "username": "test_u",
+        "email": "updated@example.com",
+        "password": user['password']
+    }
+    response = client.put("users/{}".format(inserted_users[0]),
+                          json=new_data,
+                          headers={
+                              'Authorization': 'Bearer {}'.format(mocked_jwt)
+                          })
+    assert response.status_code == 403
+
+
+def test_update_user_error():
+    user = user_data_test[1]
+    login_data = {
+        "username": user['username'],
+        "password": user['password']
+    }
+
+    # User login
+    response = client.post("users/login", json=login_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data['token'] != ""
+
+    # token is saved for request the profile
+    token = data['token']
+    assert data['username'] == user['username']
+
+    # Update
+    new_data = {
+        "username": "test3",
+        "email": user['email'],
+        "password": user['password']
+    }
+    response = client.put("users/{}".format(data['id']),
+                          json=new_data,
+                          headers={
+                              'Authorization': 'Bearer {}'.format(token)
+                          })
+    assert response.status_code == 500
+
+
 def test_repeated_users():
+    users_collection.delete_one({"username": "test_u"})
+    user_data_test.remove(user_data_test[0])
     for u in user_data_test:
         response = client.post("users/", json=u)
         assert response.status_code == 422

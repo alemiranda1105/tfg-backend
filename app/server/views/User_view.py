@@ -85,7 +85,6 @@ async def sign_up(user_data: UserSchema = Body(...)):
             responses={
                 200: {"model": UserProfileSchema},
                 403: {"model": ErrorResponse},
-                404: {"model": ErrorResponse},
                 500: {"model": ErrorResponse}
             },
             dependencies=[Depends(JWTBearer())])
@@ -95,7 +94,7 @@ def modify_user(user_id: str, request: Request, data: UserSchema = Body(...)):
         try:
             token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
         except IndexError:
-            token_id = ""
+            raise HTTPException(403, "Usuario incorrecto")
 
     # Check if the user trying to watch the profile is the same
     if token_id != user_id:

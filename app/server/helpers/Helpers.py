@@ -54,14 +54,6 @@ def user_profile_helper(user):
     }
 
 
-def updated_user_helper(user):
-    return {
-        "username": str(user["username"]),
-        "email": str(user["email"]),
-        "password": str(user['password'])
-    }
-
-
 def users_login_helper(user, token: str) -> dict:
     return {
         "id": str(user["_id"]),
