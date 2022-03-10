@@ -58,6 +58,7 @@ async def verify_user(user):
     return False
 
 
+# Only updates username and/or email
 def update_user(user_id: str, user_data):
     try:
         UserSchema(
@@ -72,6 +73,8 @@ def update_user(user_id: str, user_data):
     user_id = ObjectId(user_id)
     old = users_collection.find_one({"_id": user_id})
     if old:
+        if old['password'] != user_data['password']:
+            return False
         repeated_username = users_collection.find_one(
             {"$and": [
                 {"username": user_data['username']},
@@ -94,5 +97,5 @@ def update_user(user_id: str, user_data):
         updated = users_collection.update_one({"_id": user_id}, {"$set": user_data})
         if updated:
             new_user_data = users_collection.find_one({"_id": user_id})
-            return updated_user_helper(new_user_data)
+            return user_profile_helper(new_user_data)
     return False
