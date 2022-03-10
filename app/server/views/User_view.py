@@ -1,11 +1,14 @@
+import json
+
 from fastapi import APIRouter, Body, HTTPException, Depends, Request
 from fastapi.encoders import jsonable_encoder
 
 from app.server.auth.auth_bearer import JWTBearer
 from app.server.auth.auth_handler import get_id_from_token
-from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile
+from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
+    update_user
 from app.server.models.CustomResponse import ErrorResponse
-from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, ExternalUserSchema
+from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, ExternalUserSchema, UserProfileSchema
 
 router = APIRouter(
     prefix="/users",
@@ -15,7 +18,8 @@ router = APIRouter(
 
 @router.get("/profile",
             responses={
-                200: {"model": ExternalUserSchema},
+                200: {"model": UserProfileSchema},
+                403: {"model": ErrorResponse},
                 404: {"model": ErrorResponse}
             },
             dependencies=[Depends(JWTBearer())])
@@ -74,3 +78,34 @@ async def sign_up(user_data: UserSchema = Body(...)):
     if not new_user:
         raise HTTPException(422, "No se ha podido crear al usuario")
     return new_user
+
+
+@router.put("/{user_id}",
+            status_code=200,
+            responses={
+                200: {"model": UserProfileSchema},
+                403: {"model": ErrorResponse},
+                404: {"model": ErrorResponse},
+                500: {"model": ErrorResponse}
+            },
+            dependencies=[Depends(JWTBearer())])
+def modify_user(user_id: str, request: Request, data: UserSchema = Body(...)):
+    token_id = ""
+    if 'authorization' in request.headers:
+        try:
+            token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            token_id = ""
+
+    # Check if the user trying to watch the profile is the same
+    if token_id != user_id:
+        raise HTTPException(403, "Usuario incorrecto")
+
+    data = jsonable_encoder(data)
+    if 'id' in data:
+        del data['id']
+
+    updated = update_user(user_id, data)
+    if not updated:
+        raise HTTPException(500, "Datos no actualizados")
+    return updated

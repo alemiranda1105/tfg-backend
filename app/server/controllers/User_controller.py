@@ -4,7 +4,7 @@ from pymongo.errors import DuplicateKeyError
 
 from app.server.auth.auth_handler import sign_jwt
 from app.server.database import users_collection
-from app.server.helpers.Helpers import users_helper, users_login_helper, user_profile_helper
+from app.server.helpers.Helpers import users_helper, users_login_helper, user_profile_helper, updated_user_helper
 from app.server.models.User import UserSchema
 from app.server.utils.Utils import hash_password
 
@@ -55,4 +55,43 @@ async def verify_user(user):
     if found:
         if found['password'] == user['password']:
             return users_login_helper(found, sign_jwt(str(found['_id']))['token'])
+    return False
+
+
+def update_user(user_id: str, user_data):
+    try:
+        UserSchema(
+            email=user_data['email'],
+            username=user_data['username'],
+            password=user_data['password']
+        )
+    except ValidationError:
+        return False
+
+    user_id = ObjectId(user_id)
+    old = users_collection.find_one({"_id": user_id})
+    if old:
+        repeated_username = users_collection.find_one(
+            {"$and": [
+                {"username": user_data['username']},
+                {"_id": {
+                    "$ne": user_id
+                }}
+            ]}
+        )
+        repeated_email = users_collection.find_one(
+            {"$and": [
+                {"email": user_data['email']},
+                {"_id": {
+                    "$ne": user_id
+                }}
+            ]}
+        )
+        if repeated_email and repeated_username:
+            return False
+
+        updated = users_collection.update_one({"_id": user_id}, {"$set": user_data})
+        if updated:
+            new_user_data = users_collection.find_one({"_id": user_id})
+            return updated_user_helper(new_user_data)
     return False
