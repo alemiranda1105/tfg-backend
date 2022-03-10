@@ -68,6 +68,7 @@ def update_user(user_id: str, user_data):
     except ValidationError:
         return False
 
+    user_data['password'] = hash_password(user_data['password'])
     user_id = ObjectId(user_id)
     old = users_collection.find_one({"_id": user_id})
     if old:
