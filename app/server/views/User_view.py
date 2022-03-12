@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 
 from app.server.auth.auth_bearer import JWTBearer
 from app.server.auth.auth_handler import get_id_from_token
+from app.server.controllers.Method_controller import delete_by_user_id
 from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
     update_user, delete_user
 from app.server.models.CustomResponse import ErrorResponse
@@ -88,7 +89,7 @@ async def sign_up(user_data: UserSchema = Body(...)):
                 500: {"model": ErrorResponse}
             },
             dependencies=[Depends(JWTBearer())])
-def modify_user(user_id: str, request: Request, data: UserSchema = Body(...)):
+async def modify_user(user_id: str, request: Request, data: UserSchema = Body(...)):
     token_id = ""
     if 'authorization' in request.headers:
         try:
@@ -111,7 +112,7 @@ def modify_user(user_id: str, request: Request, data: UserSchema = Body(...)):
 
 
 @router.delete("/{user_id}")
-def remove_user(user_id: str, request: Request):
+async def remove_user(user_id: str, request: Request):
     token_id = ""
     if 'authorization' in request.headers:
         try:
@@ -123,7 +124,9 @@ def remove_user(user_id: str, request: Request):
     if token_id != user_id:
         raise HTTPException(403, "Usuario incorrecto")
 
-    removed = delete_user(user_id)
-    if removed:
-        return {"result": True}
+    methods_removed = delete_by_user_id(user_id)
+    if methods_removed:
+        removed = delete_user(user_id)
+        if removed:
+            return {"result": True}
     raise HTTPException(500, "No se ha podido completar la operación")
