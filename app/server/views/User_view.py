@@ -120,7 +120,7 @@ async def remove_user(user_id: str, request: Request):
         except IndexError:
             raise HTTPException(403, "Usuario incorrecto")
 
-    # Check if the user trying to watch the profile is the same
+    # Check if the user trying to delete the profile is the same
     if token_id != user_id:
         raise HTTPException(403, "Usuario incorrecto")
 
