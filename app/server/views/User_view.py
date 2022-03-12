@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from app.server.auth.auth_bearer import JWTBearer
 from app.server.auth.auth_handler import get_id_from_token
 from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
-    update_user
+    update_user, delete_user
 from app.server.models.CustomResponse import ErrorResponse
 from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, ExternalUserSchema, UserProfileSchema
 
@@ -108,3 +108,11 @@ def modify_user(user_id: str, request: Request, data: UserSchema = Body(...)):
     if not updated:
         raise HTTPException(500, "Datos no actualizados")
     return updated
+
+
+@router.delete("/{user_id}")
+def remove_user(user_id: str, request: Request):
+    removed = delete_user(user_id)
+    if removed:
+        return {"result": True}
+    raise HTTPException(500, "No se ha podido completar la operación")
