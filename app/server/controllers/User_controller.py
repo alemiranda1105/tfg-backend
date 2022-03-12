@@ -99,3 +99,9 @@ def update_user(user_id: str, user_data):
             new_user_data = users_collection.find_one({"_id": user_id})
             return user_profile_helper(new_user_data)
     return False
+
+
+def delete_user(user_id):
+    user_id = ObjectId(user_id)
+    removed = users_collection.delete_one({"_id": user_id})
+    return removed.deleted_count >= 1

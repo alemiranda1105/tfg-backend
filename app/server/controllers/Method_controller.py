@@ -102,6 +102,13 @@ def delete_method(method_id):
     return removed.deleted_count >= 1
 
 
+def delete_by_user_id(user_id):
+    if find_by_user_id(user_id):
+        removed = methods_collection.delete_many({"user_id": user_id})
+        return removed.deleted_count >= 1
+    return True
+
+
 def download_all_methods(file_type, user_id: str = ""):
     methods = find_all(user_id)
     if len(methods) <= 0:

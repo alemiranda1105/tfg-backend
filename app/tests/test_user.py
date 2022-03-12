@@ -1,6 +1,7 @@
 from starlette.testclient import TestClient
 
 from app.server.app import app
+from app.server.auth.auth_handler import sign_jwt
 from app.server.database import users_collection
 from mocked_test_data import user_data_test, mocked_jwt
 
@@ -186,9 +187,31 @@ def test_update_user_error():
 
 
 def test_repeated_users():
-    users_collection.delete_one({"username": "test_u"})
     user_data_test.remove(user_data_test[0])
     for u in user_data_test:
         response = client.post("users/", json=u)
         assert response.status_code == 422
-        users_collection.delete_one({"username": u['username']})
+
+
+def test_remove_user_auth_error():
+    for u in inserted_users:
+        response = client.delete("users/{}".format(u))
+        assert response.status_code == 403
+
+
+def test_remove_user():
+    for u in inserted_users:
+        token = sign_jwt(u)['token']
+        response = client.delete("users/{}".format(u), headers={
+                              'Authorization': 'Bearer {}'.format(token)
+                          })
+        assert response.status_code == 200
+
+
+def test_remove_user_error():
+    for u in inserted_users:
+        token = sign_jwt(u)['token']
+        response = client.delete("users/{}".format(u), headers={
+            'Authorization': 'Bearer {}'.format(token)
+        })
+        assert response.status_code == 500
