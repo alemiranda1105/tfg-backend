@@ -9,7 +9,7 @@ from app.server.controllers.Method_controller import delete_by_user_id
 from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
     update_user, delete_user
 from app.server.models.CustomResponse import ErrorResponse
-from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, ExternalUserSchema, UserProfileSchema
+from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, UserProfileSchema
 
 router = APIRouter(
     prefix="/users",
@@ -44,7 +44,7 @@ async def show_user_profile(user_id: str, request: Request):
 
 @router.get("/{user_id}",
             responses={
-                200: {"model": ExternalUserSchema},
+                200: {"model": UserProfileSchema},
                 404: {"model": ErrorResponse}
             })
 async def show_user(user_id: str):
