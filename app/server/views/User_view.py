@@ -1,5 +1,3 @@
-import json
-
 from fastapi import APIRouter, Body, HTTPException, Depends, Request
 from fastapi.encoders import jsonable_encoder
 
@@ -34,11 +32,11 @@ async def show_user_profile(user_id: str, request: Request):
 
     # Check if the user trying to watch the profile is the same
     if token_id != user_id:
-        raise HTTPException(403, "Usuario incorrecto")
+        raise HTTPException(403, "User not valid")
 
     user = get_user_profile(user_id)
     if not user:
-        raise HTTPException(404, "No se pudo encontrar al usuario")
+        raise HTTPException(404, "We could not find the user")
     return user
 
 
@@ -50,7 +48,7 @@ async def show_user_profile(user_id: str, request: Request):
 async def show_user(user_id: str):
     user = find_user_by_id(user_id)
     if not user:
-        raise HTTPException(404, "No se pudo encontrar al usuario")
+        raise HTTPException(404, "We could not find the user")
     return user
 
 
@@ -63,7 +61,7 @@ async def login(user_data: UserLoginSchema = Body(...)):
     user = jsonable_encoder(user_data)
     current_user = await verify_user(user)
     if not current_user:
-        raise HTTPException(404, "Usuario/Contraseña incorrectos")
+        raise HTTPException(404, "Wrong data")
     return current_user
 
 
@@ -77,7 +75,7 @@ async def sign_up(user_data: UserSchema = Body(...)):
     user = jsonable_encoder(user_data)
     new_user = await create_user(user)
     if not new_user:
-        raise HTTPException(422, "No se ha podido crear al usuario")
+        raise HTTPException(422, "We could not create the user")
     return new_user
 
 
@@ -95,11 +93,11 @@ async def modify_user(user_id: str, request: Request, data: UserSchema = Body(..
         try:
             token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
         except IndexError:
-            raise HTTPException(403, "Usuario incorrecto")
+            raise HTTPException(403, "Not valid token")
 
     # Check if the user trying to watch the profile is the same
     if token_id != user_id:
-        raise HTTPException(403, "Usuario incorrecto")
+        raise HTTPException(403, "User not valid")
 
     data = jsonable_encoder(data)
     if 'id' in data:
@@ -118,15 +116,15 @@ async def remove_user(user_id: str, request: Request):
         try:
             token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
         except IndexError:
-            raise HTTPException(403, "Usuario incorrecto")
+            raise HTTPException(403, "Not valid token")
 
     # Check if the user trying to delete the profile is the same
     if token_id != user_id:
-        raise HTTPException(403, "Usuario incorrecto")
+        raise HTTPException(403, "Wrong user")
 
     methods_removed = delete_by_user_id(user_id)
     if methods_removed:
         removed = delete_user(user_id)
         if removed:
             return {"result": True}
-    raise HTTPException(500, "No se ha podido completar la operación")
+    raise HTTPException(500, "We could not complete the operation")

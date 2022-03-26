@@ -33,7 +33,7 @@ async def get_all_methods(request: Request):
             user_id = ""
     methods = find_all(user_id)
     if len(methods) <= 0:
-        raise HTTPException(404, "No hemos encontrado ningún resultado")
+        raise HTTPException(404, "We could not find any method")
     return methods
 
 
@@ -41,15 +41,15 @@ async def get_all_methods(request: Request):
             responses={
                 200: {"model": List[MethodSchema]},
                 400: {"model": ErrorResponse},
-                500: {"model": ErrorResponse}
+                404: {"model": ErrorResponse}
             },
             dependencies=[Depends(JWTBearer())])
 async def get_method_by_user_id(user_id: str = None):
     if user_id is None:
-        raise HTTPException(400, "Error al buscar los metodos del usuario")
+        raise HTTPException(400, "The user is not valid")
     methods = find_by_user_id(user_id)
     if not methods:
-        raise HTTPException(500, "No se ha encontrado ningún resultado para este usuario")
+        raise HTTPException(404, "We could not find any method")
     return methods
 
 
@@ -63,7 +63,7 @@ async def download_csv(request: Request):
             user_id = ""
     file = download_all_methods("csv", user_id)
     if not file:
-        raise HTTPException(500, "No se puede completar la solicitud")
+        raise HTTPException(503, "We could not complete the request")
     response = StreamingResponse(iter([file.getvalue()]), media_type="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=results.csv"
     return response
@@ -79,7 +79,7 @@ async def download_xls(request: Request):
             user_id = ""
     file = download_all_methods("xls", user_id)
     if not file:
-        raise HTTPException(500, "No se puede completar la solicitud")
+        raise HTTPException(503, "We could not complete the request")
     response = StreamingResponse(iter([file.getvalue()]), media_type="application/vnd.ms-excel")
     response.headers["Content-Disposition"] = "attachment; filename=results.xlsx"
     return response
@@ -95,7 +95,7 @@ async def download_json(request: Request):
             user_id = ""
     file = download_all_methods("json", user_id)
     if not file:
-        raise HTTPException(500, "No se puede completar la solicitud")
+        raise HTTPException(503, "We could not complete the request")
     return file
 
 
@@ -107,10 +107,10 @@ async def download_json(request: Request):
             })
 async def get_method_by_id(method_id: str):
     if len(method_id) != 24:
-        raise HTTPException(400, "No ha sido posible completar la operación")
+        raise HTTPException(400, "The operation was not completed")
     method = find_by_id(method_id)
     if not method:
-        raise HTTPException(404, "No se ha podido encontrar este método")
+        raise HTTPException(404, "Method not found")
     else:
         return method
 
@@ -149,7 +149,7 @@ async def modify_method(method_id: str, file: Optional[bytes] = File(None), data
     else:
         updated = update_method(method_id, data)
     if not updated:
-        raise HTTPException(422, "No se ha podido completar la acción")
+        raise HTTPException(422, "The user was not updated")
     return updated
 
 
@@ -161,5 +161,5 @@ async def modify_method(method_id: str, file: Optional[bytes] = File(None), data
 async def remove_method(method_id: str):
     removed = delete_method(method_id)
     if not removed:
-        raise HTTPException(404, "No ha sido posible completar la actualización")
+        raise HTTPException(404, "The user was not delete")
     return {"success": True}
