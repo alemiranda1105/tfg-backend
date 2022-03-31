@@ -122,7 +122,7 @@ async def remove_user(user_id: str, request: Request):
     if token_id != user_id:
         raise HTTPException(403, "Wrong user")
 
-    methods_removed = delete_by_user_id(user_id)
+    methods_removed = delete_by_user_id(user_id, token_id)
     if methods_removed:
         removed = delete_user(user_id)
         if removed:
