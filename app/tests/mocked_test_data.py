@@ -1,6 +1,6 @@
 from app.server.auth.auth_handler import sign_jwt
 
-mocked_jwt = sign_jwt("test")['token']
+mocked_jwt = sign_jwt("1")['token']
 
 methods_data_test = [
         {
@@ -9,22 +9,25 @@ methods_data_test = [
             "info": "This is an example",
             "link": "www.example.com",
             "private": True,
+            "anonymous": False,
             "results": {}
         },
         {
-            "user_id": "2",
+            "user_id": "1",
             "name": "test2",
             "info": "This is an example2",
             "link": "www.example.com",
             "private": False,
+            "anonymous": False,
             "results": {}
         },
         {
-            "user_id": "3",
+            "user_id": "1",
             "name": "test3",
             "info": "This is an example3",
             "link": "www.example.com",
             "private": False,
+            "anonymous": False,
             "results": {}
         }
     ]

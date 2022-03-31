@@ -116,8 +116,9 @@ def update_and_evaluate(method_id, method, file, user_id):
 def delete_method(method_id, user_id):
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
-    if old['user_id'] != user_id:
-        return False
+    if old:
+        if old['user_id'] != user_id:
+            return False
     removed = methods_collection.delete_one({"_id": method_id})
     return removed.deleted_count >= 1
 
