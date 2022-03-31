@@ -44,10 +44,16 @@ async def get_all_methods(request: Request):
                 404: {"model": ErrorResponse}
             },
             dependencies=[Depends(JWTBearer())])
-async def get_method_by_user_id(user_id: str = None):
+async def get_method_by_user_id(request: Request, user_id: str = None):
     if user_id is None:
         raise HTTPException(400, "The user is not valid")
-    methods = find_by_user_id(user_id)
+    token_id = ""
+    if 'authorization' in request.headers:
+        try:
+            token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            token_id = ""
+    methods = find_by_user_id(user_id, token_id)
     if not methods:
         raise HTTPException(404, "We could not find any method")
     return methods
@@ -105,10 +111,16 @@ async def download_json(request: Request):
                 400: {"model": ErrorResponse},
                 404: {"model": ErrorResponse}
             })
-async def get_method_by_id(method_id: str):
+async def get_method_by_id(method_id: str, request: Request):
     if len(method_id) != 24:
         raise HTTPException(400, "The operation was not completed")
-    method = find_by_id(method_id)
+    user_id = ""
+    if 'authorization' in request.headers:
+        try:
+            user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            user_id = ""
+    method = find_by_id(method_id, user_id)
     if not method:
         raise HTTPException(404, "Method not found")
     else:
@@ -138,18 +150,27 @@ async def upload_method(file: bytes = File(...), data: str = Body(...)):
                 422: {"model": ErrorResponse}
             },
             dependencies=[Depends(JWTBearer())])
-async def modify_method(method_id: str, file: Optional[bytes] = File(None), data: str = Body(...)):
+async def modify_method(method_id: str, request: Request, file: Optional[bytes] = File(None), data: str = Body(...)):
     data_json = json.loads(data)
     data = jsonable_encoder(data_json)
+
+    if 'authorization' in request.headers:
+        try:
+            user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            raise HTTPException(403, 'Not valid token')
+    else:
+        raise HTTPException(403, 'Not valid token')
+
     if 'id' in data:
         del data['id']
     if file is not None:
         file = io.BytesIO(file)
-        updated = update_and_evaluate(method_id, data, file)
+        updated = update_and_evaluate(method_id, data, file, user_id)
     else:
-        updated = update_method(method_id, data)
+        updated = update_method(method_id, data, user_id)
     if not updated:
-        raise HTTPException(422, "The user was not updated")
+        raise HTTPException(422, "The method was not updated")
     return updated
 
 
@@ -158,8 +179,16 @@ async def modify_method(method_id: str, file: Optional[bytes] = File(None), data
                    404: {"model": ErrorResponse}
                },
                dependencies=[Depends(JWTBearer())])
-async def remove_method(method_id: str):
-    removed = delete_method(method_id)
+async def remove_method(method_id: str, request: Request):
+    if 'authorization' in request.headers:
+        try:
+            user_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            raise HTTPException(403, 'Not valid token')
+    else:
+        raise HTTPException(403, 'Not valid token')
+
+    removed = delete_method(method_id, user_id)
     if not removed:
-        raise HTTPException(404, "The user was not delete")
+        raise HTTPException(404, "The method was not delete")
     return {"success": True}

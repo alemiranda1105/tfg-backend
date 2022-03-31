@@ -13,21 +13,34 @@ def find_all(user_id: str = ""):
     print(user_id)
     for m in methods_collection.find():
         if not m['private'] or m['user_id'] == user_id:
+            if m['anonymous']:
+                m['user_id'] = ""
             methods.append(methods_helper(m))
     return methods
 
 
-def find_by_id(method_id):
+def find_by_id(method_id, user_id: str = ""):
     method = methods_collection.find_one({"_id": ObjectId(method_id)})
     if not method:
         return False
+    if method['user_id'] != user_id:
+        if method['private']:
+            return False
+        if method['anonymous']:
+            method['user_id'] = ""
     return methods_helper(method)
 
 
-def find_by_user_id(user_id):
+def find_by_user_id(user_id, token_id):
     methods = []
     for m in methods_collection.find({"user_id": user_id}):
-        methods.append(methods_helper(m))
+        if token_id != user_id:
+            if not m['private']:
+                if m['anonymous']:
+                    m['user_id'] = ""
+                methods.append(methods_helper(m))
+        elif token_id == user_id:
+            methods.append((methods_helper(m)))
     if len(methods) <= 0:
         return False
     return methods
@@ -48,12 +61,14 @@ def create_method(method, method_file):
         return False
 
 
-def update_method(method_id, method):
+def update_method(method_id, method, user_id):
     if not method_validation_helper(method, method_id, False):
         return False
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
+        if old['user_id'] != user_id:
+            return False
         exists = methods_collection.find_one(
             {"$and": [
                 {"name": method['name']},
@@ -71,13 +86,15 @@ def update_method(method_id, method):
     return False
 
 
-def update_and_evaluate(method_id, method, file):
+def update_and_evaluate(method_id, method, file, user_id):
     if not method_validation_helper(method, method_id, False):
         return False
 
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
+        if old['user_id'] != user_id:
+            return False
         exists = methods_collection.find_one(
             {"$and": [
                 {"name": method['name']},
@@ -96,14 +113,17 @@ def update_and_evaluate(method_id, method, file):
     return False
 
 
-def delete_method(method_id):
+def delete_method(method_id, user_id):
     method_id = ObjectId(method_id)
+    old = methods_collection.find_one({"_id": method_id})
+    if old['user_id'] != user_id:
+        return False
     removed = methods_collection.delete_one({"_id": method_id})
     return removed.deleted_count >= 1
 
 
-def delete_by_user_id(user_id):
-    if find_by_user_id(user_id):
+def delete_by_user_id(user_id, token_id):
+    if find_by_user_id(user_id, token_id):
         removed = methods_collection.delete_many({"user_id": user_id})
         return removed.deleted_count >= 1
     return True
