@@ -23,25 +23,49 @@ def methods_helper(method) -> dict:
 def method_validation_helper(method, method_id, is_new: bool) -> bool:
     try:
         if is_new:
-            NewMethodModel(
-                name=method['name'],
-                user_id=method['user_id'],
-                info=method['info'],
-                link=method['link'],
-                private=method['private'],
-                anonymous=method["anonymous"]
-            )
+            if 'source_code' in method:
+                NewMethodModel(
+                    name=method['name'],
+                    user_id=method['user_id'],
+                    info=method['info'],
+                    link=method['link'],
+                    source_code=method['source_code'],
+                    private=method['private'],
+                    anonymous=method["anonymous"]
+                )
+            else:
+                NewMethodModel(
+                    name=method['name'],
+                    user_id=method['user_id'],
+                    info=method['info'],
+                    link=method['link'],
+                    private=method['private'],
+                    anonymous=method["anonymous"]
+                )
         else:
-            MethodSchema(
-                id=method_id,
-                name=method['name'],
-                user_id=method['user_id'],
-                info=method['info'],
-                link=method['link'],
-                private=method['private'],
-                anonymous=method["anonymous"],
-                results=method['results']
-            )
+            if 'source_code' in method:
+                MethodSchema(
+                    id=method_id,
+                    name=method['name'],
+                    user_id=method['user_id'],
+                    info=method['info'],
+                    link=method['link'],
+                    source_code=method['source_code'],
+                    private=method['private'],
+                    anonymous=method["anonymous"],
+                    results=method['results']
+                )
+            else:
+                MethodSchema(
+                    id=method_id,
+                    name=method['name'],
+                    user_id=method['user_id'],
+                    info=method['info'],
+                    link=method['link'],
+                    private=method['private'],
+                    anonymous=method["anonymous"],
+                    results=method['results']
+                )
     except ValidationError:
         return False
     return True

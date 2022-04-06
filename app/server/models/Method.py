@@ -33,6 +33,8 @@ class MethodSchema(BaseModel):
                 "info": "This is an example",
                 "link": "www.example.com",
                 "private": False,
+                "anonymous": False,
+                "source_code": "www.code.com",
                 "results": {
                     "m1": 0.9192,
                     "m2": 0.5421
