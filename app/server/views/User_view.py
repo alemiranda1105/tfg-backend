@@ -105,7 +105,7 @@ async def modify_user(user_id: str, request: Request, data: UserSchema = Body(..
 
     updated = update_user(user_id, data)
     if not updated:
-        raise HTTPException(500, "Datos no actualizados")
+        raise HTTPException(500, "The user was not updated")
     return updated
 
 
