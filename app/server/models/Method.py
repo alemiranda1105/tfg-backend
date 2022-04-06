@@ -8,7 +8,7 @@ class NewMethodModel(BaseModel):
     user_id: str = Field(...)
     info: str = Field(max_length=200, min_length=5)
     link: str = Field(max_length=50, min_length=3)
-    source_code: Optional[str] = Field(max_length=50, min_length=3)
+    source_code: Optional[str] = Field(max_length=50)
     private: bool = Field(...)
     anonymous: bool = Field(...)
 
@@ -19,7 +19,7 @@ class MethodSchema(BaseModel):
     name: str = Field(max_length=25, min_length=3)
     info: str = Field(max_length=200, min_length=5)
     link: str = Field(max_length=50, min_length=3)
-    source_code: Optional[str] = Field(max_length=50, min_length=3)
+    source_code: Optional[str] = Field(max_length=50)
     private: bool = Field(...)
     anonymous: bool = Field(...)
     results: dict = Field(...)
