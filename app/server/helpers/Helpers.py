@@ -4,16 +4,20 @@ from app.server.models.Method import NewMethodModel, MethodSchema
 
 
 def methods_helper(method) -> dict:
-    return {
+    method_dict = {
         "id": str(method["_id"]),
         "user_id": str(method["user_id"]),
         "name": str(method["name"]),
         "info": str(method["info"]),
         "link": str(method["link"]),
+        "source_code": "",
         "private": bool(method["private"]),
         "anonymous": bool(method["anonymous"]),
         "results": method["results"]
     }
+    if 'source_code' in method:
+        method_dict['source_code'] = str(method['source_code'])
+    return method_dict
 
 
 def method_validation_helper(method, method_id, is_new: bool) -> bool:
