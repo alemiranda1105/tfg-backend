@@ -7,6 +7,7 @@ class NewMethodModel(BaseModel):
     info: str = Field(max_length=200, min_length=5)
     link: str = Field(max_length=50, min_length=3)
     private: bool = Field(...)
+    anonymous: bool = Field(...)
 
 
 class MethodSchema(BaseModel):
@@ -16,6 +17,7 @@ class MethodSchema(BaseModel):
     info: str = Field(max_length=200, min_length=5)
     link: str = Field(max_length=50, min_length=3)
     private: bool = Field(...)
+    anonymous: bool = Field(...)
     results: dict = Field(...)
 
     class Config:

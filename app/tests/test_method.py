@@ -77,7 +77,12 @@ def test_all_methods():
 
 def test_get_by_id():
     for m in inserted_methods:
-        response = client.get("methods/{}".format(m['id']))
+        response = client.get(
+            "methods/{}".format(m['id']),
+            headers={
+                'Authorization': 'Bearer {}'.format(mocked_jwt)
+            }
+        )
         data = response.json()
         assert response.status_code == 200
         assert data['id'] == str(m['id'])
@@ -97,20 +102,19 @@ def test_get_by_id_errors():
 
 
 def test_get_by_user_id():
-    for i in [1, 2, 3]:
-        response = client.get(
-            "methods/user_methods?user_id={}".format(i),
-            headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
-        )
-        data = response.json()
-        assert response.status_code == 200
-        for m in data:
-            assert m['user_id'] == str(i)
+    response = client.get(
+        "methods/user_methods?user_id=1",
+        headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
+    )
+    data = response.json()
+    assert response.status_code == 200
+    for m in data:
+        assert m['user_id'] == str(1)
     response = client.get(
         "methods/user_methods?user_id=60",
         headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
     )
-    assert response.status_code == 500
+    assert response.status_code == 404
     response = client.get(
         "methods/user_methods",
         headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
