@@ -10,10 +10,9 @@ from app.server.utils.Utils import to_csv, to_xls
 
 def find_all(user_id: str = ""):
     methods = []
-    print(user_id)
     for m in methods_collection.find():
         if not m['private'] or m['user_id'] == user_id:
-            if m['anonymous']:
+            if m['anonymous'] and m['user_id'] != user_id:
                 m['user_id'] = ""
             methods.append(methods_helper(m))
     return methods
@@ -26,7 +25,7 @@ def find_by_id(method_id, user_id: str = ""):
     if method['user_id'] != user_id:
         if method['private']:
             return False
-        if method['anonymous']:
+        if method['anonymous'] and method['user_id'] != user_id:
             method['user_id'] = ""
     return methods_helper(method)
 
@@ -36,7 +35,7 @@ def find_by_user_id(user_id, token_id):
     for m in methods_collection.find({"user_id": user_id}):
         if token_id != user_id:
             if not m['private']:
-                if m['anonymous']:
+                if m['anonymous'] and m['user_id'] != user_id:
                     m['user_id'] = ""
                 methods.append(methods_helper(m))
         elif token_id == user_id:
