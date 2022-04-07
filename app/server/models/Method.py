@@ -1,16 +1,23 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
 
 class NewMethodModel(BaseModel):
     name: str = Field(max_length=25, min_length=3)
     user_id: str = Field(...)
     info: str = Field(max_length=200, min_length=5)
-    link: str = Field(max_length=50, min_length=3)
-    source_code: Optional[str] = Field(max_length=50)
+    link: str = Field(max_length=500)
+    source_code: Optional[str] = Field(max_length=500)
     private: bool = Field(...)
     anonymous: bool = Field(...)
+
+    @validator('link', allow_reuse=True)
+    @validator('source_code', allow_reuse=True)
+    def complete_link(cls, v):
+        if 'https' not in v or 'http' not in v:
+            raise ValueError('URL should be complete')
+        return v.title()
 
 
 class MethodSchema(BaseModel):
@@ -41,3 +48,10 @@ class MethodSchema(BaseModel):
                 }
             }
         }
+
+    @validator('link', allow_reuse=True)
+    @validator('source_code', allow_reuse=True)
+    def complete_link(cls, v):
+        if 'https' not in v or 'http' not in v:
+            raise ValueError('URL should be complete')
+        return v.title()

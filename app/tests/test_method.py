@@ -141,7 +141,7 @@ def test_update_method():
     i = 0
     for m in inserted_methods:
         updated_name = "actualizado-{}".format(i)
-        updated_link = "www.test_{}.com".format(updated_name)
+        updated_link = "https://www.test_{}.com".format(updated_name)
         m['name'] = updated_name
         m['link'] = updated_link
         i += 1
@@ -164,9 +164,10 @@ def test_update_and_evaluate_method():
     i = 0
     for m in inserted_methods:
         updated_name = "actualizado_evaluado-{}".format(i)
-        updated_link = "www.test-evaluado_{}.com".format(updated_name)
+        updated_link = "https://www.test-ev_{}.com".format(updated_name)
         m['name'] = updated_name
         m['link'] = updated_link
+        m['source_code'] = updated_link
         i += 1
         response = client.put(
             "methods/{}".format(m['id']),

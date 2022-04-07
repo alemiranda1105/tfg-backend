@@ -7,7 +7,7 @@ methods_data_test = [
             "user_id": "1",
             "name": "test",
             "info": "This is an example",
-            "link": "www.example.com",
+            "link": "https://www.example.com",
             "private": True,
             "anonymous": False,
             "results": {}
@@ -16,7 +16,8 @@ methods_data_test = [
             "user_id": "1",
             "name": "test2",
             "info": "This is an example2",
-            "link": "www.example.com",
+            "link": "https://www.example.com",
+            "source_code": "https://www.example.com",
             "private": False,
             "anonymous": False,
             "results": {}
@@ -25,7 +26,7 @@ methods_data_test = [
             "user_id": "1",
             "name": "test3",
             "info": "This is an example3",
-            "link": "www.example.com",
+            "link": "https://www.example.com",
             "private": False,
             "anonymous": False,
             "results": {}
