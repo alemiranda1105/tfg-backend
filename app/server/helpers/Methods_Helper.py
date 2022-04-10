@@ -13,7 +13,8 @@ def methods_helper(method) -> dict:
         "source_code": "",
         "private": bool(method["private"]),
         "anonymous": bool(method["anonymous"]),
-        "results": method["results"]
+        "results": method["results"],
+        "results_by_category": method["results_by_category"]
     }
     if 'source_code' in method:
         method_dict['source_code'] = str(method['source_code'])
@@ -53,7 +54,8 @@ def method_validation_helper(method, method_id, is_new: bool) -> bool:
                     source_code=method['source_code'],
                     private=method['private'],
                     anonymous=method["anonymous"],
-                    results=method['results']
+                    results=method['results'],
+                    results_by_category=method["results_by_category"]
                 )
             else:
                 MethodSchema(
@@ -64,31 +66,9 @@ def method_validation_helper(method, method_id, is_new: bool) -> bool:
                     link=method['link'],
                     private=method['private'],
                     anonymous=method["anonymous"],
-                    results=method['results']
+                    results=method['results'],
+                    results_by_category=method["results_by_category"]
                 )
     except ValidationError:
         return False
     return True
-
-
-def users_helper(user):
-    return {
-        "id": str(user["_id"]),
-        "username": str(user["username"])
-    }
-
-
-def user_profile_helper(user):
-    return {
-        "username": str(user["username"]),
-        "email": str(user["email"])
-    }
-
-
-def users_login_helper(user, token: str) -> dict:
-    return {
-        "id": str(user["_id"]),
-        "username": str(user["username"]),
-        "email": str(user["email"]),
-        "token": token
-    }

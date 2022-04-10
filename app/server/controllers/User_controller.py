@@ -4,7 +4,7 @@ from pymongo.errors import DuplicateKeyError
 
 from app.server.auth.auth_handler import sign_jwt
 from app.server.database import users_collection
-from app.server.helpers.Helpers import users_helper, users_login_helper, user_profile_helper
+from app.server.helpers.Users_Helper import users_helper, users_login_helper, user_profile_helper
 from app.server.models.User import UserSchema
 from app.server.utils.Utils import hash_password
 

@@ -40,12 +40,16 @@ def evaluation(method, file):
     extract_zip(folder_name, file)
     file_list = get_files(folder_name)
     file_list.sort()
+    files_by_template = int(len(file_list) / 9)
     base_model = get_base_model()
 
     f_score = []
     r_score = []
     p_score = []
 
+    results_by_category = {}
+    i = 0
+    template = 1
     for file, base in zip(file_list, base_model):
         data = json_to_dict(file)
         base_data = json_to_dict(base)
@@ -57,9 +61,20 @@ def evaluation(method, file):
         r_score.append((get_recall_score(base_result, result)))
         p_score.append((get_precision_score(base_result, result)))
 
+        i += 1
+        if i == files_by_template:
+            results_by_category[str(template)] = {
+                'f1_score': np.mean(f_score),
+                'recall_score': np.mean(r_score),
+                'precision_score': np.mean(p_score)
+            }
+            i = 0
+            template += 1
+
     method['results'] = {
         'f1_score': np.mean(f_score),
         'recall_score': np.mean(r_score),
         'precision_score': np.mean(p_score)
     }
+    method['results_by_category'] = results_by_category
     return method
