@@ -63,11 +63,6 @@ def evaluation(method, file):
 
         i += 1
         if i == files_by_template:
-            '''results_by_category.append({
-                'f1_score': np.mean(f_score),
-                'recall_score': np.mean(r_score),
-                'precision_score': np.mean(p_score)
-            })'''
             results_by_category[str(template)] = {
                 'f1_score': np.mean(f_score),
                 'recall_score': np.mean(r_score),
@@ -81,5 +76,5 @@ def evaluation(method, file):
         'recall_score': np.mean(r_score),
         'precision_score': np.mean(p_score)
     }
-    method['result_by_category'] = results_by_category
+    method['results_by_category'] = results_by_category
     return method
