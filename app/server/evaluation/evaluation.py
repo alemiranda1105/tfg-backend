@@ -1,5 +1,4 @@
 import os
-import time
 import numpy as np
 from sklearn.metrics import recall_score, f1_score, precision_score
 from dotenv import load_dotenv
@@ -26,13 +25,6 @@ def get_f1_score(base, to_compare):
 
 def get_precision_score(base, to_compare):
     return precision_score(base, to_compare, average='micro')
-
-
-def get_values_from_dict(data):
-    result = []
-    for key, value in data.items():
-        result.append(value)
-    return result
 
 
 def get_values(data):
@@ -72,14 +64,8 @@ def evaluation(method, file):
 
     fields = []
 
-    # Load results from all the files
+    # Load results from all the files and initialize variables
     for file, base in zip(file_list, base_model):
-        method['results_by_category'][str(template)] = {
-            'f1_score': 0.0,
-            'recall_score': 0.0,
-            'precision_score': 0.0
-        }
-
         test_data = json_to_dict(file)
         base_data = json_to_dict(base)
 
@@ -89,10 +75,14 @@ def evaluation(method, file):
         test_result.append(get_values(test_data)[0])
         i += 1
         if i == 100:
+            method['results_by_category'][str(template)] = {
+                'f1_score': 0.0,
+                'recall_score': 0.0,
+                'precision_score': 0.0
+            }
             raw_base_result[template] = {}
             raw_test_result[template] = {}
             for f in fields:
-
                 raw_base_result[template][f] = []
                 raw_test_result[template][f] = []
             i = 0
@@ -100,6 +90,7 @@ def evaluation(method, file):
 
     template = 1
     i = 0
+    # Base result format
     for file in base_result:
         for res, field in zip(file, fields):
             raw_base_result[template][field].append(res)
@@ -109,6 +100,7 @@ def evaluation(method, file):
             i = 0
     i = 0
     template = 1
+    # Test result format
     for file in test_result:
         for res, field in zip(file, fields):
             raw_test_result[template][field].append(res)
@@ -117,6 +109,7 @@ def evaluation(method, file):
             template += 1
             i = 0
 
+    # Results
     f1_field = {}
     f1_template = {}
 
@@ -125,6 +118,8 @@ def evaluation(method, file):
 
     precision_field = {}
     precision_template = {}
+
+    # Evaluation
     for k, v in raw_base_result.items():
         f1_template[k] = []
         recall_template[k] = []
@@ -154,6 +149,7 @@ def evaluation(method, file):
         for f, res in precision_field.items():
             precision_template[k].append(res[k-1])
 
+    # Means calculation
     for t, res in f1_template.items():
         method['results_by_category'][str(t)]['f1_score'] = np.mean(res)
     for t, res in recall_template.items():
@@ -174,4 +170,5 @@ def evaluation(method, file):
         'recall_score': np.mean(list(recall_template.values())),
         'precision_score': np.mean(list(precision_template.values()))
     }
+
     return method
