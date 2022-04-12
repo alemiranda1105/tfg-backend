@@ -35,46 +35,143 @@ def get_values_from_dict(data):
     return result
 
 
+def get_values(data):
+    result = []
+    fields = []
+    for key, value in data.items():
+        result.append(value)
+        fields.append(key)
+    return result, fields
+
+
 def evaluation(method, file):
-    folder_name: str = os.getenv('UPLOADED_METHODS_FOLDER') + str(method['name']) + str(round(time.time()))
+    method['results_by_category'] = {}
+
+    # File processing
+    folder_name = os.getenv('UPLOADED_METHODS_FOLDER') + str(method['name'])
     extract_zip(folder_name, file)
+
+    # sorts file list to get in order
     file_list = get_files(folder_name)
     file_list.sort()
+
+    # files by each folder
     files_by_template = int(len(file_list) / 9)
+
     base_model = get_base_model()
 
-    f_score = []
-    r_score = []
-    p_score = []
-
-    results_by_category = {}
+    # aux variables
     i = 0
     template = 1
+
+    base_result = []
+    test_result = []
+
+    raw_base_result = {}
+    raw_test_result = {}
+
+    fields = []
+
+    # Load results from all the files
     for file, base in zip(file_list, base_model):
-        data = json_to_dict(file)
+        method['results_by_category'][str(template)] = {
+            'f1_score': 0.0,
+            'recall_score': 0.0,
+            'precision_score': 0.0
+        }
+
+        test_data = json_to_dict(file)
         base_data = json_to_dict(base)
 
-        result = get_values_from_dict(data)
-        base_result = get_values_from_dict(base_data)
+        base_values, fields = get_values(base_data)
+        base_result.append(base_values)
 
-        f_score.append(get_f1_score(base_result, result))
-        r_score.append((get_recall_score(base_result, result)))
-        p_score.append((get_precision_score(base_result, result)))
-
+        test_result.append(get_values(test_data)[0])
         i += 1
-        if i == files_by_template:
-            results_by_category[str(template)] = {
-                'f1_score': np.mean(f_score),
-                'recall_score': np.mean(r_score),
-                'precision_score': np.mean(p_score)
-            }
+        if i == 100:
+            raw_base_result[template] = {}
+            raw_test_result[template] = {}
+            for f in fields:
+
+                raw_base_result[template][f] = []
+                raw_test_result[template][f] = []
             i = 0
             template += 1
 
+    template = 1
+    i = 0
+    for file in base_result:
+        for res, field in zip(file, fields):
+            raw_base_result[template][field].append(res)
+        i += 1
+        if i >= files_by_template:
+            template += 1
+            i = 0
+    i = 0
+    template = 1
+    for file in test_result:
+        for res, field in zip(file, fields):
+            raw_test_result[template][field].append(res)
+        i += 1
+        if i >= files_by_template:
+            template += 1
+            i = 0
+
+    f1_field = {}
+    f1_template = {}
+
+    recall_field = {}
+    recall_template = {}
+
+    precision_field = {}
+    precision_template = {}
+    for k, v in raw_base_result.items():
+        f1_template[k] = []
+        recall_template[k] = []
+        precision_template[k] = []
+
+        # actual field and res of this field
+        # By field
+        for f, res in v.items():
+            if k <= 1:
+                f1_field[f] = []
+                recall_field[f] = []
+                precision_field[f] = []
+            f1s = get_f1_score(res, raw_test_result[k][f])
+            recs = get_recall_score(res, raw_test_result[k][f])
+            pres = get_precision_score(res, raw_test_result[k][f])
+
+            f1_field[f].append(f1s)
+            recall_field[f].append(recs)
+            precision_field[f].append(pres)
+
+        # the array is filled with the total score of the fields
+        # By template
+        for f, res in f1_field.items():
+            f1_template[k].append(res[k-1])
+        for f, res in recall_field.items():
+            recall_template[k].append(res[k-1])
+        for f, res in precision_field.items():
+            precision_template[k].append(res[k-1])
+
+    for t, res in f1_template.items():
+        method['results_by_category'][str(t)]['f1_score'] = np.mean(res)
+    for t, res in recall_template.items():
+        method['results_by_category'][str(t)]['recall_score'] = np.mean(res)
+    for t, res in precision_template.items():
+        method['results_by_category'][str(t)]['precision_score'] = np.mean(res)
+
+    method['results_by_field'] = {}
+    for f in fields:
+        method['results_by_field'][f] = {
+            'f1_score': np.mean(f1_field[f]),
+            'recall_score': np.mean(recall_field[f]),
+            'precision_score': np.mean(precision_field[f]),
+        }
+
     method['results'] = {
-        'f1_score': np.mean(f_score),
-        'recall_score': np.mean(r_score),
-        'precision_score': np.mean(p_score)
+        'f1_score': np.mean(list(f1_template.values())),
+        'recall_score': np.mean(list(recall_template.values())),
+        'precision_score': np.mean(list(precision_template.values()))
     }
-    method['results_by_category'] = results_by_category
     return method
