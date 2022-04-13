@@ -156,19 +156,24 @@ def evaluation(method, file):
         method['results_by_category'][str(t)]['recall_score'] = np.mean(res)
     for t, res in precision_template.items():
         method['results_by_category'][str(t)]['precision_score'] = np.mean(res)
+        method['results_by_category'][str(t)]['aguacate_score'] = np.mean(res)
 
-    method['results_by_field'] = {}
+    method['results_by_field'] = []
     for f in fields:
-        method['results_by_field'][f] = {
-            'f1_score': np.mean(f1_field[f]),
-            'recall_score': np.mean(recall_field[f]),
-            'precision_score': np.mean(precision_field[f]),
-        }
+        method['results_by_field'].append({
+            'name': f,
+            'results': {
+                'f1_score': np.mean(f1_field[f]),
+                'recall_score': np.mean(recall_field[f]),
+                'precision_score': np.mean(precision_field[f]),
+            }
+        })
 
     method['results'] = {
         'f1_score': np.mean(list(f1_template.values())),
         'recall_score': np.mean(list(recall_template.values())),
-        'precision_score': np.mean(list(precision_template.values()))
+        'precision_score': np.mean(list(precision_template.values())),
+        'aguacate_score': np.mean(list(precision_template.values())),
     }
 
     return method
