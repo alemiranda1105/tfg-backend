@@ -151,29 +151,27 @@ def evaluation(method, file):
 
     # Means calculation
     for t, res in f1_template.items():
-        method['results_by_category'][str(t)]['f1_score'] = np.mean(res)
+        method['results_by_category'][str(t)]['f1_score'] = np.round(np.mean(res), decimals=4)
     for t, res in recall_template.items():
-        method['results_by_category'][str(t)]['recall_score'] = np.mean(res)
+        method['results_by_category'][str(t)]['recall_score'] = np.round(np.mean(res), decimals=4)
     for t, res in precision_template.items():
-        method['results_by_category'][str(t)]['precision_score'] = np.mean(res)
-        method['results_by_category'][str(t)]['aguacate_score'] = np.mean(res)
+        method['results_by_category'][str(t)]['precision_score'] = np.round(np.mean(res), decimals=4)
 
     method['results_by_field'] = []
     for f in fields:
         method['results_by_field'].append({
             'name': f,
             'results': {
-                'f1_score': np.mean(f1_field[f]),
-                'recall_score': np.mean(recall_field[f]),
-                'precision_score': np.mean(precision_field[f]),
+                'f1_score': np.round(np.mean(f1_field[f]), decimals=4),
+                'recall_score': np.round(np.mean(f1_field[f]), decimals=4),
+                'precision_score': np.round(np.mean(f1_field[f]), decimals=4),
             }
         })
 
     method['results'] = {
-        'f1_score': np.mean(list(f1_template.values())),
-        'recall_score': np.mean(list(recall_template.values())),
-        'precision_score': np.mean(list(precision_template.values())),
-        'aguacate_score': np.mean(list(precision_template.values())),
+        'f1_score': np.round(np.mean(list(f1_template.values())), decimals=4),
+        'recall_score': np.round(np.mean(list(recall_template.values())), decimals=4),
+        'precision_score': np.round(np.mean(list(precision_template.values())), decimals=4)
     }
 
     return method
