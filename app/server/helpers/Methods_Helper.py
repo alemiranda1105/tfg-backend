@@ -14,7 +14,8 @@ def methods_helper(method) -> dict:
         "private": bool(method["private"]),
         "anonymous": bool(method["anonymous"]),
         "results": method["results"],
-        "results_by_category": method["results_by_category"]
+        "results_by_category": method["results_by_category"],
+        "results_by_field": method["results_by_field"]
     }
     if 'source_code' in method:
         method_dict['source_code'] = str(method['source_code'])
@@ -55,7 +56,8 @@ def method_validation_helper(method, method_id, is_new: bool) -> bool:
                     private=method['private'],
                     anonymous=method["anonymous"],
                     results=method['results'],
-                    results_by_category=method["results_by_category"]
+                    results_by_category=method["results_by_category"],
+                    results_by_field=method["results_by_field"]
                 )
             else:
                 MethodSchema(
@@ -67,7 +69,8 @@ def method_validation_helper(method, method_id, is_new: bool) -> bool:
                     private=method['private'],
                     anonymous=method["anonymous"],
                     results=method['results'],
-                    results_by_category=method["results_by_category"]
+                    results_by_category=method["results_by_category"],
+                    results_by_field=method["results_by_field"]
                 )
     except ValidationError:
         return False

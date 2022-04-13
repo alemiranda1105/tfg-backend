@@ -24,6 +24,7 @@ class MethodSchema(NewMethodModel):
     id: str = Field(...)
     results: dict = Field(...)
     results_by_category: dict = Field(...)
+    results_by_field: list = Field(...)
 
     class Config:
         schema_extra = {
