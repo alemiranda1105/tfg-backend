@@ -64,6 +64,18 @@ def evaluation(method, file):
 
     fields = []
 
+    # Results
+    results_template_field = {}
+
+    f1_field = {}
+    f1_template = {}
+
+    recall_field = {}
+    recall_template = {}
+
+    precision_field = {}
+    precision_template = {}
+
     # Load results from all the files and initialize variables
     for file, base in zip(file_list, base_model):
         test_data = json_to_dict(file)
@@ -82,9 +94,11 @@ def evaluation(method, file):
             }
             raw_base_result[template] = {}
             raw_test_result[template] = {}
+            results_template_field[str(template)] = {}
             for f in fields:
                 raw_base_result[template][f] = []
                 raw_test_result[template][f] = []
+                results_template_field[str(template)][f] = []
             i = 0
             template += 1
 
@@ -109,16 +123,6 @@ def evaluation(method, file):
             template += 1
             i = 0
 
-    # Results
-    f1_field = {}
-    f1_template = {}
-
-    recall_field = {}
-    recall_template = {}
-
-    precision_field = {}
-    precision_template = {}
-
     # Evaluation
     for k, v in raw_base_result.items():
         f1_template[k] = []
@@ -135,6 +139,26 @@ def evaluation(method, file):
             f1s = get_f1_score(res, raw_test_result[k][f])
             recs = get_recall_score(res, raw_test_result[k][f])
             pres = get_precision_score(res, raw_test_result[k][f])
+
+            # By template and field
+            results_template_field[str(k)][f].append(
+                {
+                    "name": 'f1_score',
+                    "result": f1s
+                }
+            )
+            results_template_field[str(k)][f].append(
+                {
+                    "name": 'recall_score',
+                    "result": recs
+                },
+            )
+            results_template_field[str(k)][f].append(
+                {
+                    "name": 'precision_score',
+                    "result": pres
+                }
+            )
 
             f1_field[f].append(f1s)
             recall_field[f].append(recs)
@@ -156,6 +180,8 @@ def evaluation(method, file):
         method['results_by_category'][str(t)]['recall_score'] = np.round(np.mean(res), decimals=4)
     for t, res in precision_template.items():
         method['results_by_category'][str(t)]['precision_score'] = np.round(np.mean(res), decimals=4)
+
+    method['results_by_category_field'] = results_template_field
 
     method['results_by_field'] = []
     for f in fields:

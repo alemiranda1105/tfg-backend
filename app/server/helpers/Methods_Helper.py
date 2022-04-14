@@ -15,6 +15,7 @@ def methods_helper(method) -> dict:
         "anonymous": bool(method["anonymous"]),
         "results": method["results"],
         "results_by_category": method["results_by_category"],
+        "results_by_category_field": method["results_by_category_field"],
         "results_by_field": method["results_by_field"]
     }
     if 'source_code' in method:
@@ -57,6 +58,7 @@ def method_validation_helper(method, method_id, is_new: bool) -> bool:
                     anonymous=method["anonymous"],
                     results=method['results'],
                     results_by_category=method["results_by_category"],
+                    results_by_category_field=method["results_by_category_field"],
                     results_by_field=method["results_by_field"]
                 )
             else:
@@ -70,6 +72,7 @@ def method_validation_helper(method, method_id, is_new: bool) -> bool:
                     anonymous=method["anonymous"],
                     results=method['results'],
                     results_by_category=method["results_by_category"],
+                    results_by_category_field=method["results_by_category_field"],
                     results_by_field=method["results_by_field"]
                 )
     except ValidationError:
