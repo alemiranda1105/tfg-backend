@@ -86,7 +86,7 @@ def evaluation(method, file):
 
         test_result.append(get_values(test_data)[0])
         i += 1
-        if i == 100:
+        if i == files_by_template:
             method['results_by_category'][str(template)] = {
                 'f1_score': 0.0,
                 'recall_score': 0.0,
