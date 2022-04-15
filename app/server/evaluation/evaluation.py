@@ -41,6 +41,7 @@ def evaluation(method, file):
 
     # File processing
     folder_name = os.getenv('UPLOADED_METHODS_FOLDER') + str(method['name'])
+    method['file_dir'] = folder_name
     extract_zip(folder_name, file)
 
     # sorts file list to get in order

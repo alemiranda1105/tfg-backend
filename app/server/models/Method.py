@@ -22,6 +22,7 @@ class NewMethodModel(BaseModel):
 
 class MethodSchema(NewMethodModel):
     id: str = Field(...)
+    file_dir: Optional[str] = Field(...)
     results: dict = Field(...)
     results_by_category: dict = Field(...)
     results_by_category_field: dict = Field(...)
