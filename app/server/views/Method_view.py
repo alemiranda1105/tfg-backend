@@ -4,12 +4,12 @@ from typing import Optional, List
 
 from fastapi import APIRouter, Body, Depends, File, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
-from starlette.responses import StreamingResponse
+from starlette.responses import StreamingResponse, FileResponse
 
 from app.server.auth.auth_bearer import JWTBearer
 from app.server.auth.auth_handler import get_id_from_token
 from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
-    update_method, delete_method, download_all_methods, update_and_evaluate
+    update_method, delete_method, download_all_methods, update_and_evaluate, download_method_files
 from app.server.models.CustomResponse import ErrorResponse
 from app.server.models.Method import MethodSchema
 
@@ -57,6 +57,22 @@ async def get_method_by_user_id(request: Request, user_id: str = None):
     if not methods:
         raise HTTPException(404, "We could not find any method")
     return methods
+
+
+@router.get("/download_method/{method_id}", dependencies=[Depends(JWTBearer())])
+async def download_method_file(request: Request, method_id: str):
+    token_id = ""
+    if 'authorization' in request.headers:
+        try:
+            token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+        except IndexError:
+            token_id = ""
+    file = download_method_files(method_id, token_id)
+    if not file:
+        raise HTTPException(503, "We could not complete the request")
+    response = FileResponse(file, media_type='application/zip')
+    response.headers["Content-Disposition"] = "attachment; filename={}.zip".format(method_id)
+    return response
 
 
 @router.get("/download_csv", response_class=StreamingResponse)
