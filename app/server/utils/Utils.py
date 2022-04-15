@@ -3,6 +3,7 @@ import io
 import json
 import os
 import zipfile
+import shutil
 from typing import List
 import pandas as pd
 
@@ -38,6 +39,14 @@ def get_files(rootdir):
 def extract_zip(folder_name, zip_file):
     with zipfile.ZipFile(zip_file, 'r') as zip_ref:
         zip_ref.extractall(folder_name)
+
+
+def compress_zip(name, path):
+    shutil.make_archive(name, 'zip', path)
+
+
+def delete_folder(folder):
+    os.remove(folder)
 
 
 def hash_password(password: str) -> str:
