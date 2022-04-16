@@ -141,6 +141,15 @@ def download_all_methods(file_type, user_id: str = ""):
         return to_xls(methods)
 
 
+def download_method_files(method_id: str, user_id: str):
+    method_id = ObjectId(method_id)
+    method = methods_collection.find_one({"_id": method_id})
+    if method:
+        if method['user_id'] == user_id:
+            return method['file_dir'] + '.zip'
+    return False
+
+
 def evaluate_method(method, file):
     method = evaluation(method, file)
     return method
