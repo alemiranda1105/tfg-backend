@@ -32,7 +32,7 @@ async def create_user(user):
         try:
             u = users_collection.insert_one(user)
             new_user = users_collection.find_one({"_id": u.inserted_id})
-            return users_login_helper(new_user, sign_jwt(str(new_user['_id']))['token'])
+            return users_login_helper(new_user, sign_jwt(str(new_user['_id']), str(new_user['role']))['token'])
         except DuplicateKeyError:
             return False
     return False
@@ -49,7 +49,7 @@ async def verify_user(user):
     if found:
         if user_validation_helper(user, str(found['_id']), "login"):
             if found['password'] == user['password']:
-                return users_login_helper(found, sign_jwt(str(found['_id']))['token'])
+                return users_login_helper(found, sign_jwt(str(found['_id']), found['role'])['token'])
     return False
 
 
