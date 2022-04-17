@@ -109,7 +109,7 @@ async def modify_user(user_id: str, request: Request, data: BaseUserSchema = Bod
     return updated
 
 
-@router.delete("/{user_id}")
+@router.delete("/{user_id}", dependencies=[Depends(JWTBearer())])
 async def remove_user(user_id: str, request: Request):
     token_id = ""
     if 'authorization' in request.headers:
