@@ -7,7 +7,7 @@ from app.server.controllers.Method_controller import delete_by_user_id
 from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
     update_user, delete_user
 from app.server.models.CustomResponse import ErrorResponse
-from app.server.models.User import UserSchema, UserLoginSchema, LoggedUserSchema, UserProfileSchema
+from app.server.models.User import BaseUserSchema, NewUserSchema, LoginUserSchema
 
 router = APIRouter(
     prefix="/users",
@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.get("/profile",
             responses={
-                200: {"model": UserProfileSchema},
+                200: {"model": BaseUserSchema},
                 403: {"model": ErrorResponse},
                 404: {"model": ErrorResponse}
             },
@@ -42,7 +42,7 @@ async def show_user_profile(user_id: str, request: Request):
 
 @router.get("/{user_id}",
             responses={
-                200: {"model": UserProfileSchema},
+                200: {"model": BaseUserSchema},
                 404: {"model": ErrorResponse}
             })
 async def show_user(user_id: str):
@@ -54,10 +54,10 @@ async def show_user(user_id: str):
 
 @router.post("/login",
              responses={
-                 200: {"model": LoggedUserSchema},
+                 200: {"model": BaseUserSchema},
                  404: {"model": ErrorResponse}
              })
-async def login(user_data: UserLoginSchema = Body(...)):
+async def login(user_data: LoginUserSchema = Body(...)):
     user = jsonable_encoder(user_data)
     current_user = await verify_user(user)
     if not current_user:
@@ -68,10 +68,10 @@ async def login(user_data: UserLoginSchema = Body(...)):
 @router.post("/",
              status_code=201,
              responses={
-                 201: {"model": LoggedUserSchema},
+                 201: {"model": BaseUserSchema},
                  422: {"model": ErrorResponse}
              })
-async def sign_up(user_data: UserSchema = Body(...)):
+async def sign_up(user_data: NewUserSchema = Body(...)):
     user = jsonable_encoder(user_data)
     new_user = await create_user(user)
     if not new_user:
@@ -82,12 +82,12 @@ async def sign_up(user_data: UserSchema = Body(...)):
 @router.put("/{user_id}",
             status_code=200,
             responses={
-                200: {"model": UserProfileSchema},
+                200: {"model": BaseUserSchema},
                 403: {"model": ErrorResponse},
                 500: {"model": ErrorResponse}
             },
             dependencies=[Depends(JWTBearer())])
-async def modify_user(user_id: str, request: Request, data: UserSchema = Body(...)):
+async def modify_user(user_id: str, request: Request, data: BaseUserSchema = Body(...)):
     token_id = ""
     if 'authorization' in request.headers:
         try:
