@@ -61,8 +61,18 @@ def create_method(method, method_file):
 
 
 def update_method(method_id, method, user_id):
-    if not method_validation_helper(method, method_id, False):
+    if not method_validation_helper(method, "", True):
         return False
+
+    try:
+        del method['id']
+        del method['results']
+        del method['results_by_category']
+        del method['results_by_category_field']
+        del method['results_by_field']
+    except:
+        pass
+
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})
     if old:
@@ -86,8 +96,17 @@ def update_method(method_id, method, user_id):
 
 
 def update_and_evaluate(method_id, method, file, user_id):
-    if not method_validation_helper(method, method_id, False):
+    if not method_validation_helper(method, method_id, True):
         return False
+
+    try:
+        del method['id']
+        del method['results']
+        del method['results_by_category']
+        del method['results_by_category_field']
+        del method['results_by_field']
+    except:
+        pass
 
     method_id = ObjectId(method_id)
     old = methods_collection.find_one({"_id": method_id})

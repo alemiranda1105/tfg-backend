@@ -17,7 +17,7 @@ class NewMethodModel(BaseModel):
     def complete_link(cls, v):
         if 'https' not in v or 'http' not in v:
             raise ValueError('URL should be complete')
-        return v.title()
+        return v
 
 
 class MethodSchema(NewMethodModel):

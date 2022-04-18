@@ -178,8 +178,6 @@ async def modify_method(method_id: str, request: Request, file: Optional[bytes] 
     else:
         raise HTTPException(403, 'Not valid token')
 
-    if 'id' in data:
-        del data['id']
     if file is not None:
         file = io.BytesIO(file)
         updated = update_and_evaluate(method_id, data, file, user_id)

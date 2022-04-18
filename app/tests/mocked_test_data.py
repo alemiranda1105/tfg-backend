@@ -10,7 +10,6 @@ methods_data_test = [
             "link": "https://www.example.com",
             "private": True,
             "anonymous": False,
-            "results": {}
         },
         {
             "user_id": "1",
@@ -20,7 +19,6 @@ methods_data_test = [
             "source_code": "https://www.example.com",
             "private": False,
             "anonymous": False,
-            "results": {}
         },
         {
             "user_id": "1",
@@ -29,7 +27,6 @@ methods_data_test = [
             "link": "https://www.example.com",
             "private": False,
             "anonymous": False,
-            "results": {}
         }
     ]
 
