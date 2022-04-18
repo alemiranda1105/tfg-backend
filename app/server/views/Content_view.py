@@ -23,6 +23,7 @@ router = APIRouter(
             })
 async def show_content_by_title(title: str):
     content = get_content_by_title(title)
+    print("SDJKHAGFGFDHJSGFKJASGFHJDAS")
     if not content:
         raise HTTPException(404, "We could not find any content")
     return content
@@ -35,7 +36,7 @@ async def show_content_by_title(title: str):
             })
 async def show_all_content():
     content = get_all_content()
-    if not content:
+    if len(content) <= 0:
         raise HTTPException(404, "We could not find any content")
     return content
 

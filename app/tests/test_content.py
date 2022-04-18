@@ -8,7 +8,7 @@ inserted_content = []
 
 
 def test_get_all_error():
-    response = client.get("methods/all")
+    response = client.get("content/")
     assert response.status_code == 404
 
 
