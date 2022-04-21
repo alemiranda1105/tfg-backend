@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.metrics import recall_score, f1_score, precision_score
 from dotenv import load_dotenv
 
-from app.server.utils.Utils import extract_zip, get_files, json_to_dict, compress_zip, delete_folder
+from server.utils.Utils import extract_zip, get_files, json_to_dict, compress_zip, delete_folder
 
 load_dotenv()
 

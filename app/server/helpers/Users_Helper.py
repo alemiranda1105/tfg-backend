@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 
-from app.server.models.User import BaseUserSchema, NewUserSchema, LoginUserSchema
+from server.models.User import BaseUserSchema, NewUserSchema, LoginUserSchema
 
 
 def users_helper(user):

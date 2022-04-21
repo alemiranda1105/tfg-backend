@@ -3,12 +3,12 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Body, Request, Depends
 from fastapi.encoders import jsonable_encoder
 
-from app.server.auth.auth_bearer import JWTBearer
-from app.server.auth.auth_handler import get_role_from_token
-from app.server.controllers.Content_controller import get_all_content, get_content_by_title, create_content, \
+from server.auth.auth_bearer import JWTBearer
+from server.auth.auth_handler import get_role_from_token
+from server.controllers.Content_controller import get_all_content, get_content_by_title, create_content, \
     update_content, delete_content
-from app.server.models.Content import ContentSchema, NewContentSchema
-from app.server.models.CustomResponse import ErrorResponse
+from server.models.Content import ContentSchema, NewContentSchema
+from server.models.CustomResponse import ErrorResponse
 
 router = APIRouter(
     prefix="/content",

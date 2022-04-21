@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 
-from app.server.models.Content import ContentSchema, NewContentSchema
+from server.models.Content import ContentSchema, NewContentSchema
 
 
 def content_helper(content_data) -> dict:

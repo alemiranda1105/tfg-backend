@@ -1,11 +1,11 @@
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from app.server.auth.auth_handler import sign_jwt
-from app.server.database import users_collection
-from app.server.helpers.Users_Helper import users_helper, users_login_helper, user_profile_helper, \
+from server.auth.auth_handler import sign_jwt
+from server.database import users_collection
+from server.helpers.Users_Helper import users_helper, users_login_helper, user_profile_helper, \
     user_validation_helper
-from app.server.utils.Utils import hash_password
+from server.utils.Utils import hash_password
 
 
 def find_user_by_id(user_id: str):

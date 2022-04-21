@@ -1,8 +1,8 @@
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from app.server.database import content_collection
-from app.server.helpers.Content_helper import content_helper, validation_content_helper
+from server.database import content_collection
+from server.helpers.Content_helper import content_helper, validation_content_helper
 
 
 def get_all_content():

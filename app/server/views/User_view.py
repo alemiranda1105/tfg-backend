@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Body, HTTPException, Depends, Request
 from fastapi.encoders import jsonable_encoder
 
-from app.server.auth.auth_bearer import JWTBearer
-from app.server.auth.auth_handler import get_id_from_token
-from app.server.controllers.Method_controller import delete_by_user_id
-from app.server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
+from server.auth.auth_bearer import JWTBearer
+from server.auth.auth_handler import get_id_from_token
+from server.controllers.Method_controller import delete_by_user_id
+from server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
     update_user, delete_user
-from app.server.models.CustomResponse import ErrorResponse
-from app.server.models.User import BaseUserSchema, NewUserSchema, LoginUserSchema
+from server.models.CustomResponse import ErrorResponse
+from server.models.User import BaseUserSchema, NewUserSchema, LoginUserSchema
 
 router = APIRouter(
     prefix="/users",

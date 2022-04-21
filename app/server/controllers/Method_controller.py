@@ -2,10 +2,10 @@ from bson import ObjectId
 
 from pymongo.errors import DuplicateKeyError
 
-from app.server.database import methods_collection
-from app.server.evaluation.evaluation import evaluation
-from app.server.helpers.Methods_Helper import methods_helper, method_validation_helper
-from app.server.utils.Utils import to_csv, to_xls
+from server.database import methods_collection
+from server.evaluation.evaluation import evaluation
+from server.helpers.Methods_Helper import methods_helper, method_validation_helper
+from server.utils.Utils import to_csv, to_xls
 
 
 def find_all(user_id: str = ""):

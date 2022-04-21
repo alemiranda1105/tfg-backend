@@ -6,12 +6,12 @@ from fastapi import APIRouter, Body, Depends, File, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import StreamingResponse, FileResponse
 
-from app.server.auth.auth_bearer import JWTBearer
-from app.server.auth.auth_handler import get_id_from_token
-from app.server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
+from server.auth.auth_bearer import JWTBearer
+from server.auth.auth_handler import get_id_from_token
+from server.controllers.Method_controller import find_all, find_by_id, create_method, find_by_user_id, \
     update_method, delete_method, download_all_methods, update_and_evaluate, download_method_files
-from app.server.models.CustomResponse import ErrorResponse
-from app.server.models.Method import MethodSchema
+from server.models.CustomResponse import ErrorResponse
+from server.models.Method import MethodSchema
 
 router = APIRouter(
     prefix="/methods",
