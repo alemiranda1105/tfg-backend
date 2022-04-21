@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 
-from app.server.models.Method import NewMethodModel, MethodSchema
+from server.models.Method import NewMethodModel, MethodSchema
 
 
 def methods_helper(method) -> dict:

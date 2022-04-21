@@ -2,7 +2,6 @@ from starlette.testclient import TestClient
 
 from app.server.app import app
 from app.server.auth.auth_handler import sign_jwt
-from app.server.database import users_collection
 from mocked_test_data import user_data_test, mocked_jwt
 
 client = TestClient(app)

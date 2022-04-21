@@ -17,9 +17,10 @@ def token_response(token: str):
     }
 
 
-def sign_jwt(user_id: str) -> Dict[str, str]:
+def sign_jwt(user_id: str, user_role: str) -> Dict[str, str]:
     payload = {
         "user_id": user_id,
+        "role": user_role,
         "expires": time.time() + 604800
     }
     token = jwt.encode(payload, SECRET, algorithm=ALG)
@@ -40,4 +41,11 @@ def get_id_from_token(token: str):
     payload = decode_jwt(token)
     if 'user_id' in payload:
         return payload['user_id']
+    return ''
+
+
+def get_role_from_token(token: str):
+    payload = decode_jwt(token)
+    if 'role' in payload:
+        return payload['role']
     return ''
