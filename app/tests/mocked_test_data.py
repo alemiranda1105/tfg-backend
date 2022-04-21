@@ -4,34 +4,31 @@ mocked_jwt = sign_jwt("1", "user")['token']
 mocked_jwt_admin = sign_jwt("1", "admin")['token']
 
 methods_data_test = [
-    {
-        "user_id": "1",
-        "name": "test",
-        "info": "This is an example",
-        "link": "https://www.example.com",
-        "private": True,
-        "anonymous": False,
-        "results": {}
-    },
-    {
-        "user_id": "1",
-        "name": "test2",
-        "info": "This is an example2",
-        "link": "https://www.example.com",
-        "source_code": "https://www.example.com",
-        "private": False,
-        "anonymous": False,
-        "results": {}
-    },
-    {
-        "user_id": "1",
-        "name": "test3",
-        "info": "This is an example3",
-        "link": "https://www.example.com",
-        "private": False,
-        "anonymous": False,
-        "results": {}
-    }
+        {
+            "user_id": "1",
+            "name": "test",
+            "info": "This is an example",
+            "link": "https://www.example.com",
+            "private": True,
+            "anonymous": False,
+        },
+        {
+            "user_id": "1",
+            "name": "test2",
+            "info": "This is an example2",
+            "link": "https://www.example.com",
+            "source_code": "https://www.example.com",
+            "private": False,
+            "anonymous": False,
+        },
+        {
+            "user_id": "1",
+            "name": "test3",
+            "info": "This is an example3",
+            "link": "https://www.example.com",
+            "private": False,
+            "anonymous": False,
+        }
 ]
 
 user_data_test = [

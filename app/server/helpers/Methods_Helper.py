@@ -10,7 +10,6 @@ def methods_helper(method) -> dict:
         "name": str(method["name"]),
         "info": str(method["info"]),
         "link": str(method["link"]),
-        "source_code": "",
         "private": bool(method["private"]),
         "anonymous": bool(method["anonymous"]),
         "results": method["results"],
