@@ -6,7 +6,8 @@ from server.models.User import BaseUserSchema, NewUserSchema, LoginUserSchema
 def users_helper(user):
     return {
         "id": str(user["_id"]),
-        "username": str(user["username"])
+        "username": str(user["username"]),
+        "role": str(user["role"])
     }
 
 
