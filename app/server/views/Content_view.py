@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 
 from server.auth.auth_bearer import JWTBearer
 from server.auth.auth_handler import get_role_from_token
-from server.controllers.Content_controller import get_all_content, get_content_by_title, create_content, \
+from server.controllers.Content_controller import get_all_content, get_content_by_title, get_content_by_id, create_content, \
     update_content, delete_content
 from server.models.Content import ContentSchema, NewContentSchema
 from server.models.CustomResponse import ErrorResponse
@@ -16,6 +16,18 @@ router = APIRouter(
 )
 
 
+@router.get("/by_id/{content_id}",
+            responses={
+                200: {"model": ContentSchema},
+                404: {"model": ErrorResponse}
+            })
+async def show_content_by_id(content_id: str):
+    content = get_content_by_id(content_id)
+    if not content:
+        raise HTTPException(404, "We could not find any content")
+    return content
+
+
 @router.get("/{title}",
             responses={
                 200: {"model": ContentSchema},
@@ -23,7 +35,6 @@ router = APIRouter(
             })
 async def show_content_by_title(title: str):
     content = get_content_by_title(title)
-    print("SDJKHAGFGFDHJSGFKJASGFHJDAS")
     if not content:
         raise HTTPException(404, "We could not find any content")
     return content

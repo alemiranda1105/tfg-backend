@@ -19,6 +19,13 @@ def get_content_by_title(title: str):
     return content_helper(content)
 
 
+def get_content_by_id(content_id: str):
+    content = content_collection.find_one({"_id": id})
+    if not content:
+        return False
+    return content_helper(content)
+
+
 def create_content(content):
     if validation_content_helper(content, True):
         try:
