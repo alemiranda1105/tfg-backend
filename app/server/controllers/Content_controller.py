@@ -20,7 +20,7 @@ def get_content_by_title(title: str):
 
 
 def get_content_by_id(content_id: str):
-    content = content_collection.find_one({"_id": id})
+    content = content_collection.find_one({"_id": content_id})
     if not content:
         return False
     return content_helper(content)
