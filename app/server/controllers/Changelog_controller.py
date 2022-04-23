@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
@@ -9,8 +11,13 @@ from app.server.models.Changelog import BaseChangelogSchema
 def get_all_changelog():
     changelog_list = []
     for c in changelog_collection.find():
-        changelog_list.append(changelog_helper(c))
-    return changelog_list
+        changelog_list.append(c)
+    changelog_list.sort(key=lambda cl: datetime.strptime(cl['date'], '%d/%m/%Y'))
+    changelog_list.reverse()
+    sorted_list = []
+    for c in changelog_list:
+        sorted_list.append(changelog_helper(c))
+    return sorted_list
 
 
 def get_changelog_by_id(changelog_id: str):
