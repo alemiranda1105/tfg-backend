@@ -3,9 +3,9 @@ from datetime import datetime
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
-from app.server.database import changelog_collection
-from app.server.helpers.Changelog_helper import changelog_helper, validation_changelog_helper
-from app.server.models.Changelog import BaseChangelogSchema
+from server.database import changelog_collection
+from server.helpers.Changelog_helper import changelog_helper, validation_changelog_helper
+from server.models.Changelog import BaseChangelogSchema
 
 
 def get_all_changelog():

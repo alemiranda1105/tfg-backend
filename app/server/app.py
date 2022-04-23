@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from server.views import Method_view, User_view, Dataset_view, Content_view
-
-from app.server.views import Changelog_view
+from server.views import Method_view, User_view, Dataset_view, Content_view, Changelog_view
 
 origins = [
     "http://localhost",

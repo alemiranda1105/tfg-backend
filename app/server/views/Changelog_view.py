@@ -3,12 +3,12 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Body, Request, Depends
 from fastapi.encoders import jsonable_encoder
 
-from app.server.auth.auth_bearer import JWTBearer
-from app.server.auth.auth_handler import get_role_from_token
-from app.server.controllers.Changelog_controller import get_all_changelog, get_changelog_by_id, create_changelog, \
+from server.auth.auth_bearer import JWTBearer
+from server.auth.auth_handler import get_role_from_token
+from server.controllers.Changelog_controller import get_all_changelog, get_changelog_by_id, create_changelog, \
     update_changelog, delete_changelog
-from app.server.models.Changelog import ChangelogSchema, BaseChangelogSchema
-from app.server.models.CustomResponse import ErrorResponse
+from server.models.Changelog import ChangelogSchema, BaseChangelogSchema
+from server.models.CustomResponse import ErrorResponse
 
 router = APIRouter(
     prefix="/changelog",
