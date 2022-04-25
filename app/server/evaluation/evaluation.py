@@ -202,9 +202,5 @@ def evaluation(method, file):
     }
 
     compress_zip(folder_name, method['file_dir'])
-    try:
-        delete_folder(folder_name)
-    except PermissionError as e:
-        print("Error: %s : %s" % (folder_name, e.strerror))
 
     return method

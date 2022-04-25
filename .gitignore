@@ -9,3 +9,4 @@ evaluation_examples/results-example
 evaluation_examples/test_json.zip
 files
 **/__pycache__/**
+__pycache__
