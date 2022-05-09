@@ -13,8 +13,10 @@ def users_helper(user):
 
 def user_profile_helper(user):
     return {
+        "id": str(user['_id']),
         "username": str(user["username"]),
-        "email": str(user["email"])
+        "email": str(user["email"]),
+        "role": str(user['role'])
     }
 
 

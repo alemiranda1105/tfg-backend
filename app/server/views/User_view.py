@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, HTTPException, Depends, Request
 from fastapi.encoders import jsonable_encoder
 
 from server.auth.auth_bearer import JWTBearer
-from server.auth.auth_handler import get_id_from_token
+from server.auth.auth_handler import get_id_from_token, get_role_from_token
 from server.controllers.Method_controller import delete_by_user_id
 from server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
     update_user, delete_user, update_password
@@ -122,6 +122,9 @@ async def modify_user(user_id: str, request: Request, data: BaseUserSchema = Bod
     if 'authorization' in request.headers:
         try:
             token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+            role = get_role_from_token(request.headers['authorization'].split(" ")[1])
+            if data['role'] != role:
+                raise HTTPException(403, 'Not valid token')
         except IndexError:
             raise HTTPException(403, "Not valid token")
 
