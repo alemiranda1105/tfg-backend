@@ -119,12 +119,11 @@ async def update_user_password(request: Request, passwords=Body(...)):
             dependencies=[Depends(JWTBearer())])
 async def modify_user(user_id: str, request: Request, data: BaseUserSchema = Body(...)):
     token_id = ""
+    role = ""
     if 'authorization' in request.headers:
         try:
             token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
             role = get_role_from_token(request.headers['authorization'].split(" ")[1])
-            if data['role'] != role:
-                raise HTTPException(403, 'Not valid token')
         except IndexError:
             raise HTTPException(403, "Not valid token")
 
@@ -133,6 +132,8 @@ async def modify_user(user_id: str, request: Request, data: BaseUserSchema = Bod
         raise HTTPException(403, "User not valid")
 
     data = jsonable_encoder(data)
+    if data['role'] != role:
+        raise HTTPException(403, 'Not valid token')
     if 'id' in data:
         del data['id']
 
