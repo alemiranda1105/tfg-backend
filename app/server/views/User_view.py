@@ -5,7 +5,7 @@ from server.auth.auth_bearer import JWTBearer
 from server.auth.auth_handler import get_id_from_token
 from server.controllers.Method_controller import delete_by_user_id
 from server.controllers.User_controller import create_user, verify_user, find_user_by_id, get_user_profile, \
-    update_user, delete_user
+    update_user, delete_user, update_password
 from server.models.CustomResponse import ErrorResponse
 from server.models.User import BaseUserSchema, NewUserSchema, LoginUserSchema
 
@@ -77,6 +77,36 @@ async def sign_up(user_data: NewUserSchema = Body(...)):
     if not new_user:
         raise HTTPException(422, "We could not create the user")
     return new_user
+
+
+@router.put("/update_password",
+            status_code=200,
+            responses={
+                200: {"model": BaseUserSchema},
+                403: {"model": ErrorResponse},
+                422: {"model": ErrorResponse}
+            },
+            dependencies=[Depends(JWTBearer())])
+async def update_user_password(request: Request, passwords=Body(...)):
+    if 'authorization' in request.headers:
+        try:
+            token_id = get_id_from_token(request.headers['authorization'].split(" ")[1])
+            if token_id == "":
+                raise HTTPException(403, "Not valid token")
+        except IndexError:
+            raise HTTPException(403, "Not valid token")
+    else:
+        raise HTTPException(403, "Not valid token")
+    passwords = jsonable_encoder(passwords)
+    updated = await update_password(token_id, {
+        "old_password": str(passwords['old_password']),
+        "new_password": str(passwords['new_password'])
+    })
+    if not updated:
+        raise HTTPException(422, "The password was not updated")
+    return {
+        "updated": True
+    }
 
 
 @router.put("/{user_id}",
