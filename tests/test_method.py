@@ -4,7 +4,7 @@ import os
 
 from starlette.testclient import TestClient
 from app.server.app import app
-from app.tests.mocked_test_data import methods_data_test, mocked_jwt
+from .mocked_test_data import methods_data_test, mocked_jwt
 
 client = TestClient(app)
 
@@ -14,7 +14,7 @@ file = os.getenv('TEST_FILE_ZIP')
 
 
 def test_all_methods_error():
-    response = client.get("methods/all")
+    response = client.get("idsemapi/methods/all")
     assert response.status_code == 404
     data = response.json()
     assert data["detail"] is not ""
@@ -23,7 +23,7 @@ def test_all_methods_error():
 def test_create_methods():
     for m in methods_data_test:
         response = client.post(
-            "methods/",
+            "idsemapi/methods/",
             headers={
                 'Authorization': 'Bearer {}'.format(mocked_jwt)
             },
@@ -42,7 +42,7 @@ def test_create_methods():
 def test_create_methods_errors():
     for m in methods_data_test:
         response = client.post(
-            "methods/",
+            "idsemapi/methods/",
             headers={
                 'Authorization': 'Bearer {}'.format(mocked_jwt)
             },
@@ -54,7 +54,7 @@ def test_create_methods_errors():
         assert response.status_code == 500
         # No file
         response = client.post(
-            "methods/",
+            "idsemapi/methods/",
             headers={
                 'Authorization': 'Bearer {}'.format(mocked_jwt)
             },
@@ -66,7 +66,7 @@ def test_create_methods_errors():
 
 
 def test_all_methods():
-    response = client.get("methods/all")
+    response = client.get("idsemapi/methods/all")
     assert response.status_code == 200
 
     data = response.json()
@@ -78,7 +78,7 @@ def test_all_methods():
 def test_get_by_id():
     for m in inserted_methods:
         response = client.get(
-            "methods/{}".format(m['id']),
+            "idsemapi/methods/{}".format(m['id']),
             headers={
                 'Authorization': 'Bearer {}'.format(mocked_jwt)
             }
@@ -90,12 +90,12 @@ def test_get_by_id():
 
 def test_get_by_id_errors():
     # wrong formatted id
-    response = client.get("methods/badid")
+    response = client.get("idsemapi/methods/badid")
     data = response.json()
     assert response.status_code == 400
     assert data['detail'] is not ""
     # non-existent id
-    response = client.get("methods/61f55939068506c05536aecf")
+    response = client.get("idsemapi/methods/61f55939068506c05536aecf")
     data = response.json()
     assert response.status_code == 404
     assert data['detail'] is not ""
@@ -103,7 +103,7 @@ def test_get_by_id_errors():
 
 def test_get_by_user_id():
     response = client.get(
-        "methods/user_methods?user_id=1",
+        "idsemapi/methods/user_methods?user_id=1",
         headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
     )
     data = response.json()
@@ -111,12 +111,12 @@ def test_get_by_user_id():
     for m in data:
         assert m['user_id'] == str(1)
     response = client.get(
-        "methods/user_methods?user_id=60",
+        "idsemapi/methods/user_methods?user_id=60",
         headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
     )
     assert response.status_code == 404
     response = client.get(
-        "methods/user_methods",
+        "idsemapi/methods/user_methods",
         headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
     )
     assert response.status_code == 400
@@ -126,7 +126,7 @@ def test_update_method_error():
     for m, name in zip(inserted_methods, ['test3', 'test', 'test2']):
         m['name'] = name
         response = client.put(
-            "methods/{}".format(m['id']),
+            "idsemapi/methods/{}".format(m['id']),
             headers={
                 'Authorization': 'Bearer {}'.format(mocked_jwt)
             },
@@ -146,7 +146,7 @@ def test_update_method():
         m['link'] = updated_link
         i += 1
         response = client.put(
-            "methods/{}".format(m['id']),
+            "idsemapi/methods/{}".format(m['id']),
             headers={
                 'Authorization': 'Bearer {}'.format(mocked_jwt)
             },
@@ -170,7 +170,7 @@ def test_update_and_evaluate_method():
         m['source_code'] = updated_link
         i += 1
         response = client.put(
-            "methods/{}".format(m['id']),
+            "idsemapi/methods/{}".format(m['id']),
             headers={
                 'Authorization': 'Bearer {}'.format(mocked_jwt)
             },
@@ -188,7 +188,7 @@ def test_update_and_evaluate_method():
 def test_remove_method():
     for m in inserted_methods:
         response = client.delete(
-            "methods/{}".format(m['id']),
+            "idsemapi/methods/{}".format(m['id']),
             headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
         )
         assert response.status_code == 200
@@ -198,7 +198,7 @@ def test_remove_method():
 def test_remove_method_error():
     for m in inserted_methods:
         response = client.delete(
-            "methods/{}".format(m['id']),
+            "idsemapi/methods/{}".format(m['id']),
             headers={'Authorization': 'Bearer {}'.format(mocked_jwt)}
         )
         assert response.status_code == 404

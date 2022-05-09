@@ -53,9 +53,23 @@ async def verify_user(user):
     return False
 
 
+async def update_password(user_id: str, passwords) -> bool:
+    if len(passwords['new_password']) <= 6:
+        return False
+    passwords['new_password'] = hash_password(passwords['new_password'])
+    passwords['old_password'] = hash_password(passwords['old_password'])
+    u_id = ObjectId(user_id)
+    user = users_collection.find_one({"_id": u_id})
+    if user:
+        if user['password'] == passwords['old_password']:
+            updated = users_collection.update_one({"_id": u_id}, {"$set": {"password": passwords['new_password']}})
+            return updated.modified_count == 1
+    return False
+
+
 # Only updates username and/or email
 def update_user(user_id: str, user_data):
-    if user_validation_helper(user_data, user_id, "signup"):
+    if user_validation_helper(user_data, user_id, "sign_up"):
         user_data['password'] = hash_password(user_data['password'])
         user_id = ObjectId(user_id)
         old = users_collection.find_one({"_id": user_id})
@@ -83,7 +97,8 @@ def update_user(user_id: str, user_data):
 
             updated = users_collection.update_one({"_id": user_id}, {"$set": user_data})
             if updated:
-                if user_validation_helper(updated, str(user_id), "registered"):
+                user = users_collection.find_one({"_id": user_id})
+                if user_validation_helper(user, str(user_id), "registered"):
                     new_user_data = users_collection.find_one({"_id": user_id})
                     return user_profile_helper(new_user_data)
     return False

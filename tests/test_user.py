@@ -2,7 +2,7 @@ from starlette.testclient import TestClient
 
 from app.server.app import app
 from app.server.auth.auth_handler import sign_jwt
-from mocked_test_data import user_data_test, mocked_jwt
+from .mocked_test_data import user_data_test, mocked_jwt
 
 client = TestClient(app)
 
@@ -11,7 +11,7 @@ inserted_users = []
 
 def test_signup():
     for u in user_data_test:
-        response = client.post("users/", json=u)
+        response = client.post("idsemapi/users/", json=u)
         assert response.status_code == 201
         data = response.json()
         inserted_users.append(data['id'])
@@ -25,7 +25,7 @@ def test_login_email():
             "email": u['email'],
             "password": u['password']
         }
-        response = client.post("users/login", json=u_d)
+        response = client.post("idsemapi/users/login", json=u_d)
         assert response.status_code == 200
         data = response.json()
         assert data['token'] != ""
@@ -39,7 +39,7 @@ def test_login_username():
             "username": u['username'],
             "password": u['password']
         }
-        response = client.post("users/login", json=u_d)
+        response = client.post("idsemapi/users/login", json=u_d)
         assert response.status_code == 200
         data = response.json()
         assert data['token'] != ""
@@ -54,7 +54,7 @@ def test_profile_page():
     }
 
     # User login
-    response = client.post("users/login", json=login_data)
+    response = client.post("idsemapi/users/login", json=login_data)
     assert response.status_code == 200
     data = response.json()
     assert data['token'] != ""
@@ -65,7 +65,7 @@ def test_profile_page():
 
     # profile request
     response = client.get(
-        "users/profile?user_id={}".format(data['id']),
+        "idsemapi/users/profile?user_id={}".format(data['id']),
         headers={
             'Authorization': 'Bearer {}'.format(token)
         }
@@ -78,7 +78,7 @@ def test_profile_page():
 
 def test_profile_page_error():
     response = client.get(
-        "users/profile?user_id={error}",
+        "idsemapi/users/profile?user_id={error}",
         headers={
             'Authorization': 'Bearer {}'.format(mocked_jwt)
         }
@@ -91,13 +91,13 @@ def test_login_error():
         "username": "error",
         "password": "123456"
     }
-    response = client.post("users/login", json=data)
+    response = client.post("idsemapi/users/login", json=data)
     assert response.status_code == 404
 
 
 def test_get_user_by_id():
     for u in inserted_users:
-        response = client.get("users/{}".format(u))
+        response = client.get("idsemapi/users/{}".format(u))
         assert response.status_code == 200
         data = response.json()
         assert data['id'] == u
@@ -112,7 +112,7 @@ def test_update_user():
     }
 
     # User login
-    response = client.post("users/login", json=login_data)
+    response = client.post("idsemapi/users/login", json=login_data)
     assert response.status_code == 200
     data = response.json()
     assert data['token'] != ""
@@ -123,15 +123,18 @@ def test_update_user():
 
     # Update
     new_data = {
+        "id": data['id'],
         "username": "test_u",
         "email": "updated@example.com",
-        "password": user['password']
+        "password": user['password'],
+        "role": "user"
     }
-    response = client.put("users/{}".format(data['id']),
+    response = client.put("idsemapi/users/{}".format(data['id']),
                           json=new_data,
                           headers={
                               'Authorization': 'Bearer {}'.format(token)
                           })
+    print(response.json())
     assert response.status_code == 200
     data = response.json()
     assert data['username'] == new_data['username']
@@ -142,11 +145,13 @@ def test_update_user_auth_error():
     user = user_data_test[0]
     # Update
     new_data = {
+        "id": "1",
         "username": "test_u",
         "email": "updated@example.com",
-        "password": user['password']
+        "password": user['password'],
+        "role": "user"
     }
-    response = client.put("users/{}".format(inserted_users[0]),
+    response = client.put("idsemapi/users/{}".format(inserted_users[0]),
                           json=new_data,
                           headers={
                               'Authorization': 'Bearer {}'.format(mocked_jwt)
@@ -162,7 +167,7 @@ def test_update_user_error():
     }
 
     # User login
-    response = client.post("users/login", json=login_data)
+    response = client.post("idsemapi/users/login", json=login_data)
     assert response.status_code == 200
     data = response.json()
     assert data['token'] != ""
@@ -173,11 +178,13 @@ def test_update_user_error():
 
     # Update
     new_data = {
+        "id": data['id'],
         "username": "test3",
         "email": user['email'],
-        "password": user['password']
+        "password": user['password'],
+        "role": user['role']
     }
-    response = client.put("users/{}".format(data['id']),
+    response = client.put("idsemapi/users/{}".format(data['id']),
                           json=new_data,
                           headers={
                               'Authorization': 'Bearer {}'.format(token)
@@ -188,20 +195,20 @@ def test_update_user_error():
 def test_repeated_users():
     user_data_test.remove(user_data_test[0])
     for u in user_data_test:
-        response = client.post("users/", json=u)
+        response = client.post("idsemapi/users/", json=u)
         assert response.status_code == 422
 
 
 def test_remove_user_auth_error():
     for u in inserted_users:
-        response = client.delete("users/{}".format(u))
+        response = client.delete("idsemapi/users/{}".format(u))
         assert response.status_code == 403
 
 
 def test_remove_user():
     for u in inserted_users:
-        token = sign_jwt(u)['token']
-        response = client.delete("users/{}".format(u), headers={
+        token = sign_jwt(u, 'user')['token']
+        response = client.delete("idsemapi/users/{}".format(u), headers={
                               'Authorization': 'Bearer {}'.format(token)
                           })
         assert response.status_code == 200
@@ -209,8 +216,8 @@ def test_remove_user():
 
 def test_remove_user_error():
     for u in inserted_users:
-        token = sign_jwt(u)['token']
-        response = client.delete("users/{}".format(u), headers={
+        token = sign_jwt(u, 'user')['token']
+        response = client.delete("idsemapi/users/{}".format(u), headers={
             'Authorization': 'Bearer {}'.format(token)
         })
         assert response.status_code == 500

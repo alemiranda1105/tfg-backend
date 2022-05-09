@@ -35,17 +35,20 @@ user_data_test = [
     {
         "username": "test1",
         "email": "test1@test.com",
-        "password": "123456"
+        "password": "123456",
+        "role": "user"
     },
     {
         "username": "test2",
         "email": "test2@test.com",
-        "password": "123456"
+        "password": "123456",
+        "role": "user"
     },
     {
         "username": "test3",
         "email": "test3@test.com",
-        "password": "123456"
+        "password": "123456",
+        "role": "user"
     }
 ]
 
