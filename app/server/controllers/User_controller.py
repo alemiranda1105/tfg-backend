@@ -42,14 +42,13 @@ async def verify_user(user):
     user['password'] = hash_password(user['password'])
     found = users_collection.find_one({
         "$or": [
-            {"username": user['username']},
-            {"email": user['email']}
+            {"username": user['data']},
+            {"email": user['data']}
         ]
     })
     if found:
-        if user_validation_helper(user, str(found['_id']), "login"):
-            if found['password'] == user['password']:
-                return users_login_helper(found, sign_jwt(str(found['_id']), found['role'])['token'])
+        if found['password'] == user['password']:
+            return users_login_helper(found, sign_jwt(str(found['_id']), found['role'])['token'])
     return False
 
 

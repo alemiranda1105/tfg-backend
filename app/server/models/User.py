@@ -24,6 +24,5 @@ class NewUserSchema(BaseModel):
 
 
 class LoginUserSchema(BaseModel):
-    email: Optional[EmailStr]
-    username: Optional[str]
+    data: str = Field(...)
     password: str = Field(...)
