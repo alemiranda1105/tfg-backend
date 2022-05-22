@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from server.auth.auth_bearer import JWTBearer
 from server.auth.auth_handler import get_role_from_token
 from server.controllers.Content_controller import get_all_content, get_content_by_title, get_content_by_id, create_content, \
-    update_content, delete_content
+    update_content, delete_content, get_content_by_page
 from server.models.Content import ContentSchema, NewContentSchema
 from server.models.CustomResponse import ErrorResponse
 
@@ -14,6 +14,18 @@ router = APIRouter(
     prefix="/content",
     tags=["content"]
 )
+
+
+@router.get("/page/{page}",
+            responses={
+                200: {"model": ContentSchema},
+                404: {"model": ErrorResponse}
+            })
+async def show_content_by_id(page: str):
+    content = get_content_by_page(page)
+    if not content:
+        raise HTTPException(404, "We could not find any content")
+    return content
 
 
 @router.get("/by_id/{content_id}",

@@ -12,6 +12,15 @@ def get_all_content():
     return content
 
 
+def get_content_by_page(page: str):
+    content = []
+    for c in content_collection.find({"page": page}):
+        content.append(content_helper(c))
+    if len(content) <= 0:
+        return False
+    return content
+
+
 def get_content_by_title(title: str):
     content = content_collection.find_one({"title": title})
     if not content:
