@@ -19,7 +19,10 @@ def find_all(user_id: str = ""):
 
 
 def find_by_id(method_id, user_id: str = ""):
-    method = methods_collection.find_one({"_id": ObjectId(method_id)})
+    try:
+        method = methods_collection.find_one({"_id": ObjectId(method_id)})
+    except:
+        return False
     if not method:
         return False
     if method['user_id'] != user_id:
