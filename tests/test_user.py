@@ -22,7 +22,7 @@ def test_login_email():
     # With email
     for u in user_data_test:
         u_d = {
-            "email": u['email'],
+            "data": u['email'],
             "password": u['password']
         }
         response = client.post("idsemapi/users/login", json=u_d)
@@ -36,7 +36,7 @@ def test_login_username():
     # With username
     for u in user_data_test:
         u_d = {
-            "username": u['username'],
+            "data": u['username'],
             "password": u['password']
         }
         response = client.post("idsemapi/users/login", json=u_d)
@@ -49,7 +49,7 @@ def test_login_username():
 def test_profile_page():
     user = user_data_test[0]
     login_data = {
-        "username": user['username'],
+        "data": user['username'],
         "password": user['password']
     }
 
@@ -88,7 +88,7 @@ def test_profile_page_error():
 
 def test_login_error():
     data = {
-        "username": "error",
+        "data": "error",
         "password": "123456"
     }
     response = client.post("idsemapi/users/login", json=data)
@@ -107,7 +107,7 @@ def test_get_user_by_id():
 def test_update_user():
     user = user_data_test[0]
     login_data = {
-        "username": user['username'],
+        "data": user['username'],
         "password": user['password']
     }
 
@@ -162,7 +162,7 @@ def test_update_user_auth_error():
 def test_update_user_error():
     user = user_data_test[1]
     login_data = {
-        "username": user['username'],
+        "data": user['username'],
         "password": user['password']
     }
 
