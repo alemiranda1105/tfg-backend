@@ -89,9 +89,9 @@ def evaluation(method, file):
         i += 1
         if i == files_by_template:
             method['results_by_category'][str(template)] = {
-                'f1_score': 0.0,
-                'recall_score': 0.0,
-                'precision_score': 0.0
+                'precision': 0.0,
+                'recall': 0.0,
+                'f1_score': 0.0
             }
             raw_base_result[template] = {}
             raw_test_result[template] = {}
@@ -144,20 +144,20 @@ def evaluation(method, file):
             # By template and field
             results_template_field[str(k)][f].append(
                 {
-                    "name": 'f1_score',
-                    "result": f1s
+                    "name": 'precision',
+                    "result": pres
                 }
             )
             results_template_field[str(k)][f].append(
                 {
-                    "name": 'recall_score',
+                    "name": 'recall',
                     "result": recs
                 },
             )
             results_template_field[str(k)][f].append(
                 {
-                    "name": 'precision_score',
-                    "result": pres
+                    "name": 'f1_score',
+                    "result": f1s
                 }
             )
 
@@ -175,12 +175,12 @@ def evaluation(method, file):
             precision_template[k].append(res[k-1])
 
     # Means calculation
+    for t, res in precision_template.items():
+        method['results_by_category'][str(t)]['precision'] = np.round(np.mean(res), decimals=4)
+    for t, res in recall_template.items():
+        method['results_by_category'][str(t)]['recall'] = np.round(np.mean(res), decimals=4)
     for t, res in f1_template.items():
         method['results_by_category'][str(t)]['f1_score'] = np.round(np.mean(res), decimals=4)
-    for t, res in recall_template.items():
-        method['results_by_category'][str(t)]['recall_score'] = np.round(np.mean(res), decimals=4)
-    for t, res in precision_template.items():
-        method['results_by_category'][str(t)]['precision_score'] = np.round(np.mean(res), decimals=4)
 
     method['results_by_category_field'] = results_template_field
 
@@ -189,16 +189,16 @@ def evaluation(method, file):
         method['results_by_field'].append({
             'name': f,
             'results': {
+                'precision': np.round(np.mean(precision_field[f]), decimals=4),
+                'recall': np.round(np.mean(recall_field[f]), decimals=4),
                 'f1_score': np.round(np.mean(f1_field[f]), decimals=4),
-                'recall_score': np.round(np.mean(f1_field[f]), decimals=4),
-                'precision_score': np.round(np.mean(f1_field[f]), decimals=4),
             }
         })
 
     method['results'] = {
-        'f1_score': np.round(np.mean(list(f1_template.values())), decimals=4),
-        'recall_score': np.round(np.mean(list(recall_template.values())), decimals=4),
-        'precision_score': np.round(np.mean(list(precision_template.values())), decimals=4)
+        'precision': np.round(np.mean(list(precision_template.values())), decimals=4),
+        'recall': np.round(np.mean(list(recall_template.values())), decimals=4),
+        'f1_score': np.round(np.mean(list(f1_template.values())), decimals=4)
     }
 
     compress_zip(folder_name, method['file_dir'])
