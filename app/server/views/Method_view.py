@@ -156,7 +156,7 @@ async def upload_method(file: bytes = File(...), data: str = Body(...)):
     file = io.BytesIO(file)
     new_method = create_method(data, file)
     if not new_method:
-        raise HTTPException(500, "No se ha podido completar la solicitud")
+        raise HTTPException(500, "The method could not be created")
     return new_method
 
 
